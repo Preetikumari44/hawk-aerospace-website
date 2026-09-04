@@ -9,6 +9,7 @@
   /* Colors */
   --color-brand: var(--brand);
   --color-brand-foreground: var(--brand-foreground);
+  --color-route: var(--route);
   --color-light: var(--light);
   --color-light-foreground: var(--light-foreground);
   --color-background: var(--background);
@@ -117,36 +118,37 @@
 }
 
 :root {
-  /* Accent colors */
-  --brand: oklch(66.5% 0.1804 47.04);
-  --brand-foreground: oklch(75.77% 0.159 55.91);
+  /* Accent colors — SkyMap-aligned blue/violet family */
+  --brand: #315ee8;
+  --brand-foreground: #4f7cff;
+  --route: #4f7cff;
 
-  /* Customized shadcn/ui colors */
-  --background: oklch(97.65% 0.001 17.18);
-  --foreground: oklch(0.141 0.005 285.823);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.141 0.005 285.823);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.141 0.005 285.823);
-  --primary: oklch(66.5% 0.1804 47.04);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.967 0.001 286.375);
-  --secondary-foreground: oklch(0.21 0.006 285.885);
-  --muted: oklch(0.967 0.001 286.375);
-  --muted-foreground: oklch(0.552 0.016 285.938);
-  --accent: oklch(0.927 0.001 286.375);
-  --accent-foreground: oklch(0.21 0.006 285.885);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.577 0.245 27.325);
-  --border: oklch(0.92 0.004 286.32);
-  --input: oklch(0.92 0.004 286.32);
-  --ring: oklch(0.705 0.015 286.067);
+  /* Customized shadcn/ui colors (SkyMap light palette) */
+  --background: #f4f6fb;
+  --foreground: #111522;
+  --card: #ffffff;
+  --card-foreground: #111522;
+  --popover: #ffffff;
+  --popover-foreground: #111522;
+  --primary: #315ee8;
+  --primary-foreground: #ffffff;
+  --secondary: #e8ecf5;
+  --secondary-foreground: #111522;
+  --muted: #e8ecf5;
+  --muted-foreground: #626a7a;
+  --accent: #e7ebf5;
+  --accent-foreground: #111522;
+  --destructive: #d74a4a;
+  --destructive-foreground: #d74a4a;
+  --border: #dfe3ec;
+  --input: #dfe3ec;
+  --ring: #4f7cff;
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  --radius: 0.625rem;
+  --radius: 0.75rem;
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.141 0.005 285.823);
   --sidebar-primary: oklch(0.21 0.006 285.885);
@@ -166,30 +168,31 @@
 }
 
 .dark {
-  /* Accent colors */
-  --brand: oklch(83.6% 0.1177 66.87);
-  --brand-foreground: oklch(75.77% 0.159 55.91);
+  /* Accent colors — SkyMap-aligned blue/violet family */
+  --brand: #4f7cff;
+  --brand-foreground: #8b5cf6;
+  --route: #8b5cf6;
 
-  /* Customized shadcn/ui colors */
-  --background: oklch(0.141 0.005 285.823);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.141 0.005 285.823);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.141 0.005 285.823);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.985 0 0);
-  --primary-foreground: oklch(0.21 0.006 285.885);
-  --secondary: oklch(0.274 0.006 286.033);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.274 0.006 286.033);
-  --muted-foreground: oklch(0.705 0.015 286.067);
-  --accent: oklch(0.274 0.006 286.033);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.396 0.141 25.723);
-  --destructive-foreground: oklch(0.637 0.237 25.331);
-  --border: oklch(0.885 0.006 286.033);
-  --input: oklch(0.274 0.006 286.033);
-  --ring: oklch(0.442 0.017 285.786);
+  /* Customized shadcn/ui colors (SkyMap dark palette — the canonical Hawk theme) */
+  --background: #0a0b0f;
+  --foreground: #e7e9ee;
+  --card: #0e1118;
+  --card-foreground: #e7e9ee;
+  --popover: #111522;
+  --popover-foreground: #e7e9ee;
+  --primary: #4f7cff;
+  --primary-foreground: #ffffff;
+  --secondary: #151927;
+  --secondary-foreground: #e7e9ee;
+  --muted: #151927;
+  --muted-foreground: #8d94a5;
+  --accent: #151927;
+  --accent-foreground: #e7e9ee;
+  --destructive: #ef5d68;
+  --destructive-foreground: #ef5d68;
+  --border: rgba(255, 255, 255, 0.09);
+  --input: rgba(255, 255, 255, 0.11);
+  --ring: #4f7cff;
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
@@ -219,5 +222,105 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* Hero cinematic scene keyframes */
+@keyframes hero-twinkle {
+  0%, 100% { opacity: 0.15; }
+  50% { opacity: 0.6; }
+}
+@keyframes hero-pulse-ring {
+  0% { transform: scale(0.6); opacity: 0.6; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+@keyframes hero-drone-drift {
+  0%, 100% { transform: translate(0px, 0px); }
+  25% { transform: translate(14px, -10px); }
+  50% { transform: translate(-6px, 8px); }
+  75% { transform: translate(-16px, -6px); }
+}
+@keyframes hero-dash {
+  to { stroke-dashoffset: -160; }
+}
+@keyframes hv-scan {
+  0% { transform: translateY(0); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(480px); opacity: 0; }
+}
+@keyframes motif-spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee 32s linear infinite;
+}
+@keyframes scan {
+  0%, 100% { transform: translateX(-140%); opacity: 0; }
+  15%, 85% { opacity: 1; }
+  50% { transform: translateX(420%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee {
+    animation: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-stars circle,
+  [style*="hero-pulse-ring"],
+  [style*="hero-drone-drift"],
+  [style*="hero-dash"],
+  [style*="hv-scan"],
+  [style*="motif-spin"],
+  .scan-beam {
+    animation: none !important;
+  }
+}
+
+/* SkyMap-aligned surface utilities, shared with the SkyMap product so both
+   experiences read as one visual family. */
+@layer utilities {
+  .eyebrow {
+    @apply text-brand text-xs font-medium tracking-[0.2em] uppercase;
+  }
+  .gradient-text {
+    color: transparent;
+    background: linear-gradient(100deg, #4f7cff, #8b5cf6);
+    background-clip: text;
+    -webkit-background-clip: text;
+  }
+  .glass {
+    background: color-mix(in srgb, var(--card) 74%, transparent);
+    border: 1px solid var(--border);
+    box-shadow: 0 18px 80px rgba(0, 0, 0, 0.18);
+    backdrop-filter: blur(20px);
+  }
+  .scan-beam {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in srgb, var(--brand) 12%, transparent),
+      transparent
+    );
+    animation: scan 6s ease-in-out infinite;
+  }
+  .map-grid {
+    background-color: var(--card);
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px),
+      radial-gradient(
+        circle at 62% 45%,
+        color-mix(in srgb, var(--brand) 16%, transparent),
+        transparent 32%
+      );
+    background-size:
+      52px 52px,
+      52px 52px,
+      100% 100%;
   }
 }
