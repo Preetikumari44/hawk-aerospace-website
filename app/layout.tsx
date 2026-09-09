@@ -3,38 +3,33 @@ import "@/app/globals.css";
 import type { Metadata } from "next";
 import { ThemeProvider } from "next-themes";
 
-import { inter } from "@/lib/fonts";
-
 import { siteConfig } from "../config/site";
+import { BookingAuthProvider } from "../lib/booking/auth-context";
 
 export const metadata: Metadata = {
   title: {
-    default: siteConfig.name,
+    default: "Hawk Aerospace | Aerial Intelligence, Geospatial Technology & AI",
     template: `%s - ${siteConfig.name}`,
   },
   metadataBase: new URL(siteConfig.url),
   description: siteConfig.description,
   keywords: [
-    "Landing page template",
-    "Components",
-    "Shadcn",
-    "Next.js",
-    "React",
-    "Tailwind CSS",
-    "Radix UI",
+    "drone survey",
+    "aerial mapping",
+    "geospatial intelligence",
+    "LiDAR",
+    "photogrammetry",
+    "GIS",
+    "digital twin",
+    "3D mapping",
+    "AI inspection",
+    "precision agriculture",
   ],
-  authors: [
-    {
-      name: "Mikolaj Dobrucki",
-      url: "https://mikolajdobrucki.com",
-    },
-  ],
-  creator: "mikolajdobrucki",
   openGraph: {
     type: "website",
     locale: "en_US",
     url: siteConfig.url,
-    title: siteConfig.name,
+    title: "Hawk Aerospace | Aerial Intelligence, Geospatial Technology & AI",
     description: siteConfig.description,
     siteName: siteConfig.name,
     images: [
@@ -48,10 +43,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: siteConfig.name,
+    title: "Hawk Aerospace | Aerial Intelligence, Geospatial Technology & AI",
     description: siteConfig.description,
     images: [siteConfig.ogImage],
-    creator: "@mikolajdobrucki",
   },
   icons: {
     icon: "/favicon.svg",
@@ -71,14 +65,14 @@ export default function RootLayout({
       style={{ colorScheme: "dark" }}
       suppressHydrationWarning
     >
-      <body className={`${inter.variable} bg-background font-sans antialiased`}>
+      <body className="bg-background font-sans antialiased">
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <BookingAuthProvider>{children}</BookingAuthProvider>
         </ThemeProvider>
       </body>
     </html>

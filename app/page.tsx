@@ -1,12 +1,14 @@
-import CTA from "../components/sections/cta/default";
-import FAQ from "../components/sections/faq/default";
-import Footer from "../components/sections/footer/default";
-import Hero from "../components/sections/hero/default";
-import Items from "../components/sections/items/default";
-import Logos from "../components/sections/logos/default";
-import Navbar from "../components/sections/navbar/default";
-import Pricing from "../components/sections/pricing/default";
-import Stats from "../components/sections/stats/default";
+import { BookingHub } from "../components/booking/booking-hub";
+import CapabilityStrip from "../components/homepage/capability-strip/default";
+import CTA from "../components/homepage/cta/default";
+import Footer from "../components/homepage/footer/default";
+import Hardware from "../components/homepage/hardware/default";
+import Hero from "../components/homepage/hero/default";
+import HowWhy from "../components/homepage/how-why/default";
+import MarketplaceTeaser from "../components/homepage/marketplace-teaser/default";
+import Navbar from "../components/homepage/navbar/default";
+import Pipeline from "../components/homepage/pipeline/default";
+import Solutions from "../components/homepage/solutions/default";
 import { LayoutLines } from "../components/ui/layout-lines";
 
 export default function Home() {
@@ -14,12 +16,14 @@ export default function Home() {
     <main className="bg-background text-foreground min-h-screen w-full">
       <LayoutLines />
       <Navbar />
+      <BookingHub />
       <Hero />
-      <Logos />
-      <Items />
-      <Stats />
-      <Pricing />
-      <FAQ />
+      <CapabilityStrip />
+      <Pipeline />
+      <Solutions />
+      <Hardware />
+      <MarketplaceTeaser />
+      <HowWhy />
       <CTA />
       <Footer />
     </main>

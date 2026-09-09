@@ -9,6 +9,7 @@
   /* Colors */
   --color-brand: var(--brand);
   --color-brand-foreground: var(--brand-foreground);
+  --color-route: var(--route);
   --color-light: var(--light);
   --color-light-foreground: var(--light-foreground);
   --color-background: var(--background);
@@ -117,36 +118,37 @@
 }
 
 :root {
-  /* Accent colors */
-  --brand: oklch(66.5% 0.1804 47.04);
-  --brand-foreground: oklch(75.77% 0.159 55.91);
+  /* Accent colors — SkyMap-aligned blue/violet family */
+  --brand: #315ee8;
+  --brand-foreground: #4f7cff;
+  --route: #4f7cff;
 
-  /* Customized shadcn/ui colors */
-  --background: oklch(97.65% 0.001 17.18);
-  --foreground: oklch(0.141 0.005 285.823);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.141 0.005 285.823);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.141 0.005 285.823);
-  --primary: oklch(66.5% 0.1804 47.04);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.967 0.001 286.375);
-  --secondary-foreground: oklch(0.21 0.006 285.885);
-  --muted: oklch(0.967 0.001 286.375);
-  --muted-foreground: oklch(0.552 0.016 285.938);
-  --accent: oklch(0.927 0.001 286.375);
-  --accent-foreground: oklch(0.21 0.006 285.885);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.577 0.245 27.325);
-  --border: oklch(0.92 0.004 286.32);
-  --input: oklch(0.92 0.004 286.32);
-  --ring: oklch(0.705 0.015 286.067);
+  /* Customized shadcn/ui colors (SkyMap light palette) */
+  --background: #f4f6fb;
+  --foreground: #111522;
+  --card: #ffffff;
+  --card-foreground: #111522;
+  --popover: #ffffff;
+  --popover-foreground: #111522;
+  --primary: #315ee8;
+  --primary-foreground: #ffffff;
+  --secondary: #e8ecf5;
+  --secondary-foreground: #111522;
+  --muted: #e8ecf5;
+  --muted-foreground: #626a7a;
+  --accent: #e7ebf5;
+  --accent-foreground: #111522;
+  --destructive: #d74a4a;
+  --destructive-foreground: #d74a4a;
+  --border: #dfe3ec;
+  --input: #dfe3ec;
+  --ring: #4f7cff;
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  --radius: 0.625rem;
+  --radius: 0.75rem;
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.141 0.005 285.823);
   --sidebar-primary: oklch(0.21 0.006 285.885);
@@ -166,30 +168,31 @@
 }
 
 .dark {
-  /* Accent colors */
-  --brand: oklch(83.6% 0.1177 66.87);
-  --brand-foreground: oklch(75.77% 0.159 55.91);
+  /* Accent colors — SkyMap-aligned blue/violet family */
+  --brand: #4f7cff;
+  --brand-foreground: #8b5cf6;
+  --route: #8b5cf6;
 
-  /* Customized shadcn/ui colors */
-  --background: oklch(0.141 0.005 285.823);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.141 0.005 285.823);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.141 0.005 285.823);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.985 0 0);
-  --primary-foreground: oklch(0.21 0.006 285.885);
-  --secondary: oklch(0.274 0.006 286.033);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.274 0.006 286.033);
-  --muted-foreground: oklch(0.705 0.015 286.067);
-  --accent: oklch(0.274 0.006 286.033);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.396 0.141 25.723);
-  --destructive-foreground: oklch(0.637 0.237 25.331);
-  --border: oklch(0.885 0.006 286.033);
-  --input: oklch(0.274 0.006 286.033);
-  --ring: oklch(0.442 0.017 285.786);
+  /* Customized shadcn/ui colors (SkyMap dark palette — the canonical Hawk theme) */
+  --background: #0a0b0f;
+  --foreground: #e7e9ee;
+  --card: #0e1118;
+  --card-foreground: #e7e9ee;
+  --popover: #111522;
+  --popover-foreground: #e7e9ee;
+  --primary: #4f7cff;
+  --primary-foreground: #ffffff;
+  --secondary: #151927;
+  --secondary-foreground: #e7e9ee;
+  --muted: #151927;
+  --muted-foreground: #8d94a5;
+  --accent: #151927;
+  --accent-foreground: #e7e9ee;
+  --destructive: #ef5d68;
+  --destructive-foreground: #ef5d68;
+  --border: rgba(255, 255, 255, 0.09);
+  --input: rgba(255, 255, 255, 0.11);
+  --ring: #4f7cff;
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
@@ -219,5 +222,234 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* Hero cinematic scene keyframes */
+@keyframes hero-twinkle {
+  0%, 100% { opacity: 0.15; }
+  50% { opacity: 0.6; }
+}
+@keyframes hero-pulse-ring {
+  0% { transform: scale(0.6); opacity: 0.6; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+@keyframes hero-drone-drift {
+  0%, 100% { transform: translate(0px, 0px); }
+  25% { transform: translate(14px, -10px); }
+  50% { transform: translate(-6px, 8px); }
+  75% { transform: translate(-16px, -6px); }
+}
+@keyframes hero-dash {
+  to { stroke-dashoffset: -160; }
+}
+@keyframes hv-scan {
+  0% { transform: translateY(0); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(480px); opacity: 0; }
+}
+@keyframes motif-spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee 32s linear infinite;
+}
+@keyframes scan {
+  0%, 100% { transform: translateX(-140%); opacity: 0; }
+  15%, 85% { opacity: 1; }
+  50% { transform: translateX(420%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee {
+    animation: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-stars circle,
+  [style*="hero-pulse-ring"],
+  [style*="hero-drone-drift"],
+  [style*="hero-dash"],
+  [style*="hv-scan"],
+  [style*="motif-spin"],
+  .scan-beam {
+    animation: none !important;
+  }
+}
+
+/* Live Drone Booking / Raider radar — converted from drone-radar.html,
+   recolored to the Hawk brand (blue/violet) theme instead of the reference's
+   green tactical palette. */
+.radar-grid-lines {
+  background:
+    repeating-radial-gradient(
+      circle,
+      transparent 0 13%,
+      color-mix(in srgb, var(--brand) 20%, transparent) 13.2% 13.45%
+    ),
+    linear-gradient(color-mix(in srgb, var(--brand) 12%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--brand) 12%, transparent) 1px, transparent 1px);
+  background-size:
+    auto,
+    20% 20%,
+    20% 20%;
+}
+.radar-sweep {
+  animation: radar-sweep 4s linear infinite;
+}
+@keyframes radar-sweep {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.radar-blip {
+  animation: radar-blip-in 0.4s ease-out backwards;
+}
+@keyframes radar-blip-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.4);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+.radar-blip-ping {
+  animation: radar-blip-ping 2.2s ease-out infinite;
+}
+@keyframes radar-blip-ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  100% {
+    transform: scale(2.8);
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .radar-sweep,
+  .radar-blip-ping,
+  .radar-blip {
+    animation: none !important;
+  }
+}
+
+/* Raider System — real India map (Leaflet), dark-tactical themed to match
+   the existing radar HUD instead of Leaflet's default light chrome. */
+.hawk-leaflet {
+  background: var(--background);
+  font-family: inherit;
+}
+.hawk-leaflet .leaflet-tile-pane {
+  filter: saturate(0.85) brightness(0.92);
+}
+.hawk-leaflet .leaflet-control-zoom {
+  border: none !important;
+  overflow: hidden;
+  border-radius: 10px !important;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--brand) 35%, transparent) !important;
+}
+.hawk-leaflet .leaflet-control-zoom a {
+  background: color-mix(in srgb, var(--background) 82%, transparent) !important;
+  color: var(--foreground) !important;
+  border: none !important;
+  backdrop-filter: blur(6px);
+}
+.hawk-leaflet .leaflet-control-zoom a:hover {
+  background: color-mix(in srgb, var(--brand) 20%, var(--background)) !important;
+  color: var(--brand-foreground) !important;
+}
+.hawk-leaflet .leaflet-tooltip {
+  background: color-mix(in srgb, var(--background) 90%, transparent);
+  border: 1px solid color-mix(in srgb, var(--brand) 40%, transparent);
+  color: var(--foreground);
+  border-radius: 6px;
+  font-size: 11px;
+  box-shadow: none;
+}
+.hawk-leaflet .leaflet-tooltip-top:before {
+  border-top-color: color-mix(in srgb, var(--brand) 40%, transparent);
+}
+
+.hawk-map-center-dot {
+  display: block;
+  width: 14px;
+  height: 14px;
+  border-radius: 9999px;
+  background: var(--brand-foreground);
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 0 18px var(--brand-foreground);
+}
+
+.hawk-map-blip {
+  display: block;
+  width: var(--blip-size, 13px);
+  height: var(--blip-size, 13px);
+  border-radius: 9999px;
+  background: var(--blip-color, #a78bfa);
+  box-shadow: 0 0 10px var(--blip-color, #a78bfa);
+  cursor: pointer;
+  transition: transform 0.15s ease-out;
+}
+.hawk-map-blip:hover {
+  transform: scale(1.25);
+}
+.hawk-map-blip-busy {
+  cursor: default;
+  opacity: 0.85;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hawk-map-blip {
+    transition: none;
+  }
+}
+
+/* SkyMap-aligned surface utilities, shared with the SkyMap product so both
+   experiences read as one visual family. */
+@layer utilities {
+  .eyebrow {
+    @apply text-brand text-xs font-medium tracking-[0.2em] uppercase;
+  }
+  .gradient-text {
+    color: transparent;
+    background: linear-gradient(100deg, #4f7cff, #8b5cf6);
+    background-clip: text;
+    -webkit-background-clip: text;
+  }
+  .glass {
+    background: color-mix(in srgb, var(--card) 74%, transparent);
+    border: 1px solid var(--border);
+    box-shadow: 0 18px 80px rgba(0, 0, 0, 0.18);
+    backdrop-filter: blur(20px);
+  }
+  .scan-beam {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in srgb, var(--brand) 12%, transparent),
+      transparent
+    );
+    animation: scan 6s ease-in-out infinite;
+  }
+  .map-grid {
+    background-color: var(--card);
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px),
+      radial-gradient(
+        circle at 62% 45%,
+        color-mix(in srgb, var(--brand) 16%, transparent),
+        transparent 32%
+      );
+    background-size:
+      52px 52px,
+      52px 52px,
+      100% 100%;
   }
 }
