@@ -1,0 +1,238 @@
+name: CI CD Deploy
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
+jobs:
+  # ─────────────────────────────────────────────────────────────
+  # Job 1: Deploy Backend (Includes new app-release.apk & version.json)
+  # ─────────────────────────────────────────────────────────────
+  deploy-backend:
+    name: Deploy Backend
+    runs-on: ubuntu-latest
+    if: github.repository == 'hawkaerospaceuav/SuperApp' && !contains(github.event.head_commit.message, '[skip ci]')
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Setup SSH for EC2 Deploy
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H ${{ secrets.DEPLOY_HOST }} >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: Build Backend
+        run: |
+          cd Backend
+          npm install --no-audit --no-fund
+          npm run build
+
+      - name: Pack dist + public (with release APK and version.json)
+        run: |
+          cd Backend
+          tar --exclude=node_modules --exclude=.git --exclude='.env*' \
+              -czf /tmp/backend.tar.gz \
+              src dist public package.json package-lock.json
+
+      - name: Upload Backend to EC2 Server
+        run: |
+          scp -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
+              /tmp/backend.tar.gz \
+              ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:~/backend.tar.gz
+
+      - name: Extract, install deps & restart PM2
+        run: |
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
+              ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} <<'DEPLOY'
+            cd ~/hawk-backend
+            tar -xzf ~/backend.tar.gz
+            npm install --omit=dev --no-audit --no-fund
+            pm2 restart main || pm2 start dist/src/main.js --name main
+            pm2 save
+            rm -f ~/backend.tar.gz
+            npm cache clean --force 2>/dev/null
+            curl -s -m 10 http://127.0.0.1:3000/api/update/latest || echo DEPLOY_FAILED
+          DEPLOY
+
+  # ─────────────────────────────────────────────────────────────
+  # Job 2: Deploy Admin Frontend
+  # ─────────────────────────────────────────────────────────────
+  deploy-admin-frontend:
+    name: Deploy Admin Frontend
+    runs-on: ubuntu-latest
+    if: github.repository == 'hawkaerospaceuav/SuperApp' && !contains(github.event.head_commit.message, '[skip ci]')
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Check for Admin_Frontend Changes
+        id: filter
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            if git rev-parse HEAD~1 >/dev/null 2>&1; then
+              CHANGES=$(git diff --name-only HEAD~1 HEAD -- Admin_Frontend/ deploy/nginx-hawk-admin.conf)
+              if [ -n "$CHANGES" ]; then
+                echo "Changes detected in Admin_Frontend:"
+                echo "$CHANGES"
+                echo "changed=true" >> $GITHUB_OUTPUT
+              else
+                echo "No changes in Admin_Frontend."
+                echo "changed=false" >> $GITHUB_OUTPUT
+              fi
+            else
+              echo "changed=true" >> $GITHUB_OUTPUT
+            fi
+          fi
+
+      - name: Setup Node 22
+        if: steps.filter.outputs.changed == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Build Admin Web Bundle
+        if: steps.filter.outputs.changed == 'true'
+        env:
+          REACT_APP_API_URL: http://${{ secrets.DEPLOY_HOST }}:3000/api
+          REACT_APP_API_BASE_URL: http://${{ secrets.DEPLOY_HOST }}:3000
+          REACT_APP_WS_URL: http://${{ secrets.DEPLOY_HOST }}:3000/ws
+          REACT_APP_ENV: production
+          REACT_APP_GOOGLE_MAPS_API_KEY: ${{ secrets.REACT_APP_GOOGLE_MAPS_API_KEY }}
+        run: |
+          cd Admin_Frontend
+          npm install --no-audit --no-fund
+          npm run build
+
+      - name: Setup SSH
+        if: steps.filter.outputs.changed == 'true'
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H ${{ secrets.DEPLOY_HOST }} >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: Pack and Upload Admin dist
+        if: steps.filter.outputs.changed == 'true'
+        run: |
+          tar -czf /tmp/hawk-admin-dist.tar.gz -C Admin_Frontend/dist .
+          scp -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
+              /tmp/hawk-admin-dist.tar.gz \
+              ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:~/hawk-admin-dist.tar.gz
+          scp -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
+              deploy/nginx-hawk-admin.conf \
+              ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:~/hawk-admin-nginx.conf
+
+      - name: Extract & Reload Nginx for Admin Frontend
+        if: steps.filter.outputs.changed == 'true'
+        run: |
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
+              ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} <<'DEPLOY'
+            sudo mkdir -p /var/www/hawk-admin
+            sudo tar -xzf ~/hawk-admin-dist.tar.gz -C /var/www/hawk-admin
+            sudo cp ~/hawk-admin-nginx.conf /etc/nginx/sites-available/hawk-admin
+            sudo ln -sf /etc/nginx/sites-available/hawk-admin /etc/nginx/sites-enabled/hawk-admin
+            sudo rm -f /etc/nginx/sites-enabled/default
+            sudo nginx -t && sudo systemctl reload nginx
+            rm -f ~/hawk-admin-dist.tar.gz ~/hawk-admin-nginx.conf
+            echo "ADMIN_DEPLOY_OK"
+          DEPLOY
+
+  # ─────────────────────────────────────────────────────────────
+  # Job 3: Deploy User Frontend
+  # ─────────────────────────────────────────────────────────────
+  deploy-user-frontend:
+    name: Deploy User Frontend
+    runs-on: ubuntu-latest
+    if: github.repository == 'hawkaerospaceuav/SuperApp' && !contains(github.event.head_commit.message, '[skip ci]')
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Check for User_Frontend Changes
+        id: filter
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            if git rev-parse HEAD~1 >/dev/null 2>&1; then
+              CHANGES=$(git diff --name-only HEAD~1 HEAD -- User_Frontend/ deploy/nginx-hawk-user.conf)
+              if [ -n "$CHANGES" ]; then
+                echo "Changes detected in User_Frontend:"
+                echo "$CHANGES"
+                echo "changed=true" >> $GITHUB_OUTPUT
+              else
+                echo "No changes in User_Frontend."
+                echo "changed=false" >> $GITHUB_OUTPUT
+              fi
+            else
+              echo "changed=true" >> $GITHUB_OUTPUT
+            fi
+          fi
+
+      - name: Setup Node 22
+        if: steps.filter.outputs.changed == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Build User Web Bundle
+        if: steps.filter.outputs.changed == 'true'
+        env:
+          REACT_APP_API_BASE_URL: http://${{ secrets.DEPLOY_HOST }}:3000/api
+          REACT_APP_GOOGLE_MAPS_API_KEY: ${{ secrets.REACT_APP_GOOGLE_MAPS_API_KEY }}
+        run: |
+          cd User_Frontend
+          npm install --no-audit --no-fund
+          npm run build:web
+
+      - name: Setup SSH
+        if: steps.filter.outputs.changed == 'true'
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H ${{ secrets.DEPLOY_HOST }} >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: Pack and Upload User dist
+        if: steps.filter.outputs.changed == 'true'
+        run: |
+          tar -czf /tmp/hawk-user-dist.tar.gz -C User_Frontend/dist .
+          scp -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
+              /tmp/hawk-user-dist.tar.gz \
+              ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:~/hawk-user-dist.tar.gz
+          scp -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
+              deploy/nginx-hawk-user.conf \
+              ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:~/hawk-user-nginx.conf
+
+      - name: Extract & Reload Nginx for User Frontend
+        if: steps.filter.outputs.changed == 'true'
+        run: |
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
+              ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} <<'DEPLOY'
+            sudo mkdir -p /var/www/hawk-user
+            sudo tar -xzf ~/hawk-user-dist.tar.gz -C /var/www/hawk-user
+            sudo cp ~/hawk-user-nginx.conf /etc/nginx/sites-available/hawk-user
+            sudo ln -sf /etc/nginx/sites-available/hawk-user /etc/nginx/sites-enabled/hawk-user
+            sudo nginx -t && sudo systemctl reload nginx
+            rm -f ~/hawk-user-dist.tar.gz ~/hawk-user-nginx.conf
+            echo "USER_DEPLOY_OK"
+          DEPLOY

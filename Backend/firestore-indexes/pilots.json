@@ -1,0 +1,36 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "pilots",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "assignedFleetManagerId", "order": "ASCENDING" },
+        { "fieldPath": "status", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "pilots",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "status", "order": "ASCENDING" },
+        { "fieldPath": "rating", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "pilots",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "licenseExpiry", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "pilots",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "status", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

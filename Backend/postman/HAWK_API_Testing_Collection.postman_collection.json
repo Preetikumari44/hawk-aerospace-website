@@ -1,0 +1,916 @@
+{
+  "info": {
+    "name": "HAWK Aerosystem API - Complete Booking Flow",
+    "description": "Complete API testing collection for HAWK backend including authentication, OTP verification, booking creation, and automatic pilot assignment",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3001/api",
+      "type": "string"
+    },
+    {
+      "key": "accessToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refreshToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "customerUid",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "bookingId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "phoneNumber",
+      "value": "+919876543210",
+      "type": "string"
+    },
+    {
+      "key": "otp",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "applicationId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "uploadUrl",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "storagePath",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "downloadUrl",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Authentication Flow",
+      "item": [
+        {
+          "name": "1.1 Request OTP",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200 || pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    console.log('✓ OTP requested successfully');",
+                  "    console.log('Check your phone or Firebase console for OTP');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"{{phoneNumber}}\",\n  \"role\": \"customer\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/request-otp",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "request-otp"]
+            },
+            "description": "Request OTP for phone number authentication. OTP will be sent via Firebase Auth SMS to your phone."
+          }
+        },
+        {
+          "name": "1.2 Verify OTP & Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200 || pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('accessToken', response.accessToken);",
+                  "    pm.collectionVariables.set('refreshToken', response.refreshToken);",
+                  "    pm.collectionVariables.set('customerUid', response.user.uid);",
+                  "    console.log('✓ Login successful');",
+                  "    console.log('Access Token:', response.accessToken);",
+                  "    console.log('Customer UID:', response.user.uid);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"{{phoneNumber}}\",\n  \"otpCode\": \"{{otp}}\",\n  \"role\": \"customer\",\n  \"name\": \"John Doe\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/verify-otp",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "verify-otp"]
+            },
+            "description": "Verify OTP and complete login. Check your phone for the 6-digit OTP code sent via SMS.\n\n**Request Body:**\n- `phone` (required): Phone number with country code\n- `otpCode` (required): 6-digit OTP received via SMS\n- `role` (optional): User role (defaults to 'customer')\n- `name` (optional): User's full name (optional for first-time registration)\n\n**Response includes:**\n- `accessToken`: JWT access token (15 minutes expiry)\n- `refreshToken`: JWT refresh token (7 days expiry)\n- `user`: User object with complete profile\n  - `uid`: Unique user identifier\n  - `roles`: Array of user roles\n  - `primaryRole`: Primary user role\n  - `status`: Account status (active/pending/blocked/suspended)\n  - `name`: User's full name\n  - `email`: User's email (if available)\n  - `phone`: User's phone number\n  - `mobile`: User's mobile number\n  - `verification`: Verification status object\n    - `isVerified`: Overall verification status\n    - `emailVerified`: Email verification status\n    - `phoneVerified`: Phone verification status\n    - `kycStatus`: KYC status (pending/approved/rejected)\n  - `permissions`: User permissions object\n  - `profileData`: Additional profile data (timezone, language, etc.)\n\n**Auto-creates:**\n- User record in `users` collection\n- Customer profile in `customers` collection (for customer role)\n\nSaves access token automatically to collection variables."
+          }
+        },
+        {
+          "name": "1.3 Refresh Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('accessToken', response.accessToken);",
+                  "    console.log('✓ Token refreshed');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/refresh",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "refresh"]
+            },
+            "description": "Refresh expired access token using refresh token"
+          }
+        }
+      ],
+      "description": "Complete authentication flow: Request OTP → Verify OTP → Get Access Token"
+    },
+    {
+      "name": "2. Customer Profile",
+      "item": [
+        {
+          "name": "2.1 Get My Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/customers/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["customers", "profile"]
+            },
+            "description": "Get authenticated customer's profile information"
+          }
+        },
+        {
+          "name": "2.2 Update Profile",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"John Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"address\": \"123 Farm Road, Maharashtra, India\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/customers/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["customers", "profile"]
+            },
+            "description": "Update customer profile information"
+          }
+        }
+      ],
+      "description": "Customer profile management endpoints"
+    },
+    {
+      "name": "3. Booking Flow - Complete Journey",
+      "item": [
+        {
+          "name": "3.1 Create Booking (Auto-Assignment)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200 || pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('bookingId', response.id || response.bookingId);",
+                  "    console.log('✓ Booking created successfully');",
+                  "    console.log('Booking ID:', response.id || response.bookingId);",
+                  "    console.log('Status:', response.status);",
+                  "    console.log('Auto-assignment will trigger in background');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"serviceType\": \"spraying\",\n  \"cropType\": \"wheat\",\n  \"area\": 5.5,\n  \"unit\": \"acres\",\n  \"address\": \"Farm Plot 42, Village Nandgaon, Nashik, Maharashtra\",\n  \"location\": {\n    \"latitude\": 19.9615,\n    \"longitude\": 73.7863\n  },\n  \"scheduledDate\": \"2026-07-15\",\n  \"preferredTimeSlot\": \"morning\",\n  \"notes\": \"Please avoid windy conditions. Organic pesticide to be used.\",\n  \"paymentMethod\": \"upi\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/bookings",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings"]
+            },
+            "description": "Create a new booking. System automatically assigns available pilot based on location, availability, and rating."
+          }
+        },
+        {
+          "name": "3.2 Get Booking Details",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/bookings/{{bookingId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", "{{bookingId}}"]
+            },
+            "description": "Get complete booking details including pilot assignment status"
+          }
+        },
+        {
+          "name": "3.3 Get Booking Progress",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/bookings/{{bookingId}}/progress",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", "{{bookingId}}", "progress"]
+            },
+            "description": "Track booking progress through different stages"
+          }
+        },
+        {
+          "name": "3.4 List My Bookings",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/bookings?status=pending&page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "pending"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "List all bookings for authenticated customer"
+          }
+        },
+        {
+          "name": "3.5 Cancel Booking",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Weather conditions not suitable\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/bookings/{{bookingId}}/cancel",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", "{{bookingId}}", "cancel"]
+            },
+            "description": "Cancel a booking with refund processing"
+          }
+        },
+        {
+          "name": "3.6 Rate Booking",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 5,\n  \"review\": \"Excellent service! Pilot was professional and thorough.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/bookings/{{bookingId}}/rate",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", "{{bookingId}}", "rate"]
+            },
+            "description": "Rate completed booking (1-5 stars)"
+          }
+        }
+      ],
+      "description": "Complete booking flow from creation to completion with automatic pilot assignment"
+    },
+    {
+      "name": "4. Pricing & Estimation",
+      "item": [
+        {
+          "name": "4.1 Get Price Estimate",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"serviceType\": \"spraying\",\n  \"cropType\": \"wheat\",\n  \"area\": 5.5,\n  \"unit\": \"acres\",\n  \"location\": {\n    \"latitude\": 19.9615,\n    \"longitude\": 73.7863\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/pricing/estimate",
+              "host": ["{{baseUrl}}"],
+              "path": ["pricing", "estimate"]
+            },
+            "description": "Get price estimate before creating booking"
+          }
+        },
+        {
+          "name": "4.2 Get Available Coupons",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/coupons/available",
+              "host": ["{{baseUrl}}"],
+              "path": ["coupons", "available"]
+            },
+            "description": "Get list of available discount coupons"
+          }
+        }
+      ],
+      "description": "Pricing and coupon endpoints"
+    },
+    {
+      "name": "5. Payment",
+      "item": [
+        {
+          "name": "5.1 Get Payment Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/payments/booking/{{bookingId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["payments", "booking", "{{bookingId}}"]
+            },
+            "description": "Check payment status for a booking"
+          }
+        },
+        {
+          "name": "5.2 Get Payment History",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/payments/history?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["payments", "history"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Get payment transaction history"
+          }
+        }
+      ],
+      "description": "Payment-related endpoints"
+    },
+    {
+      "name": "6. Support & Complaints",
+      "item": [
+        {
+          "name": "6.1 Create Support Ticket",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"category\": \"technical\",\n  \"subject\": \"App login issue\",\n  \"description\": \"Unable to login with OTP\",\n  \"priority\": \"high\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/support/tickets",
+              "host": ["{{baseUrl}}"],
+              "path": ["support", "tickets"]
+            },
+            "description": "Create a support ticket"
+          }
+        },
+        {
+          "name": "6.2 File Complaint",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bookingId\": \"{{bookingId}}\",\n  \"category\": \"service_quality\",\n  \"description\": \"Service was not completed as promised\",\n  \"severity\": \"high\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/complaints",
+              "host": ["{{baseUrl}}"],
+              "path": ["complaints"]
+            },
+            "description": "File a complaint regarding service"
+          }
+        }
+      ],
+      "description": "Support and complaint management"
+    },
+    {
+      "name": "7. Pilot Application - Customer Flow",
+      "item": [
+        {
+          "name": "7.1 Request Document Upload URL",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200 || pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('uploadUrl', response.uploadUrl);",
+                  "    pm.collectionVariables.set('storagePath', response.storagePath);",
+                  "    console.log('✓ Upload URL generated');",
+                  "    console.log('Storage Path:', response.storagePath);",
+                  "    console.log('Now upload the file directly to Firebase Storage using the uploadUrl');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fileName\": \"aadhaar_front.jpg\",\n  \"contentType\": \"image/jpeg\",\n  \"fileSize\": 245760,\n  \"bucket\": \"documents\",\n  \"folder\": \"kyc/aadhaar_front\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/files/upload-url",
+              "host": ["{{baseUrl}}"],
+              "path": ["files", "upload-url"]
+            },
+            "description": "Step 1: Request a signed upload URL for document upload. Client will upload directly to Firebase Storage using this URL."
+          }
+        },
+        {
+          "name": "7.2 Register Uploaded Document",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200 || pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('downloadUrl', response.downloadUrl);",
+                  "    console.log('✓ Document registered');",
+                  "    console.log('Download URL:', response.downloadUrl);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fileName\": \"aadhaar_front.jpg\",\n  \"contentType\": \"image/jpeg\",\n  \"fileSize\": 245760,\n  \"storagePath\": \"{{storagePath}}\",\n  \"downloadUrl\": \"https://storage.googleapis.com/your-bucket/path/to/file.jpg\",\n  \"category\": \"kyc\",\n  \"documentType\": \"aadhaar\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/files/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["files", "register"]
+            },
+            "description": "Step 3: Register file metadata after client uploads file directly to Firebase Storage. Update downloadUrl with actual URL from Firebase."
+          }
+        },
+        {
+          "name": "7.3 Submit Pilot Application",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200 || pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('applicationId', response.applicationId);",
+                  "    console.log('✓ Application submitted successfully');",
+                  "    console.log('Application ID:', response.applicationId);",
+                  "    console.log('Status:', response.status);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Ramesh Patil\",\n  \"age\": 41,\n  \"phone\": \"+919220989863\",\n  \"email\": \"ramesh.patil@example.com\",\n  \"address\": \"Pune, Maharashtra\",\n  \"pilotLicenseNumber\": \"DGCA-MA-2022-444633\",\n  \"pilotExpiryDate\": \"2033-01-04T00:00:00.000Z\",\n  \"aadhaarCardNumber\": \"2925 4862 8296\",\n  \"panNumber\": \"PALGI5465N\",\n  \"gstNumber\": \"27PALGI5465N1Z5\",\n  \"serviceTypes\": [\"spraying\", \"mapping\"],\n  \"specializations\": [\"Crop Spraying\", \"Monitoring\"],\n  \"flightHours\": 100,\n  \"experience\": 3,\n  \"documents\": [\n    {\n      \"type\": \"aadhaar_front\",\n      \"storagePath\": \"{{storagePath}}\",\n      \"downloadUrl\": \"{{downloadUrl}}\",\n      \"verified\": \"pending\"\n    },\n    {\n      \"type\": \"aadhaar_back\",\n      \"storagePath\": \"documents/uid/kyc/aadhaar_back/file.jpg\",\n      \"downloadUrl\": \"https://storage.googleapis.com/...\",\n      \"verified\": \"pending\"\n    },\n    {\n      \"type\": \"pilot_license\",\n      \"storagePath\": \"documents/uid/kyc/pilot_license/file.pdf\",\n      \"downloadUrl\": \"https://storage.googleapis.com/...\",\n      \"verified\": \"pending\"\n    },\n    {\n      \"type\": \"gst_registration\",\n      \"storagePath\": \"documents/uid/kyc/gst_registration/file.pdf\",\n      \"downloadUrl\": \"https://storage.googleapis.com/...\",\n      \"verified\": \"pending\"\n    }\n  ],\n  \"additionalNotes\": \"Experienced pilot with focus on agricultural operations\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/pilot-applications/submit",
+              "host": ["{{baseUrl}}"],
+              "path": ["pilot-applications", "submit"]
+            },
+            "description": "Submit complete pilot application with all required documents. Customer must upload documents first via steps 7.1 and 7.2."
+          }
+        },
+        {
+          "name": "7.4 Check My Application Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/pilot-applications/my-application",
+              "host": ["{{baseUrl}}"],
+              "path": ["pilot-applications", "my-application"]
+            },
+            "description": "Get current status of your pilot application (pending/approved/rejected)"
+          }
+        },
+        {
+          "name": "7.5 Withdraw Application",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/pilot-applications/{{applicationId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["pilot-applications", "{{applicationId}}"]
+            },
+            "description": "Delete/withdraw a pending pilot application. Only pending applications can be withdrawn."
+          }
+        }
+      ],
+      "description": "Customer flow for applying to become a pilot"
+    },
+    {
+      "name": "8. Pilot Application - Admin Review",
+      "item": [
+        {
+          "name": "8.1 Get All Applications",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/pilot-applications?status=pending&limit=50&offset=0",
+              "host": ["{{baseUrl}}"],
+              "path": ["pilot-applications"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "pending",
+                  "description": "Filter by status: pending, approved, rejected"
+                },
+                {
+                  "key": "limit",
+                  "value": "50"
+                },
+                {
+                  "key": "offset",
+                  "value": "0"
+                }
+              ]
+            },
+            "description": "Admin: Get list of all pilot applications with optional status filter"
+          }
+        },
+        {
+          "name": "8.2 Get Pending Applications Count",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/pilot-applications/pending/count",
+              "host": ["{{baseUrl}}"],
+              "path": ["pilot-applications", "pending", "count"]
+            },
+            "description": "Admin: Get count of applications awaiting review"
+          }
+        },
+        {
+          "name": "8.3 Get Application Details",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/pilot-applications/{{applicationId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["pilot-applications", "{{applicationId}}"]
+            },
+            "description": "Admin: Get detailed information about a specific pilot application including all documents"
+          }
+        },
+        {
+          "name": "8.4 Verify Document",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"verified\",\n  \"notes\": \"Document is clear and valid. License verified with DGCA database.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/pilot-applications/{{applicationId}}/documents/pilot_license/verify",
+              "host": ["{{baseUrl}}"],
+              "path": [
+                "pilot-applications",
+                "{{applicationId}}",
+                "documents",
+                "pilot_license",
+                "verify"
+              ]
+            },
+            "description": "Admin: Verify or reject individual documents. Document types: aadhaar_front, aadhaar_back, pilot_license, gst_registration, pilot_registration, medical_certificate"
+          }
+        },
+        {
+          "name": "8.5 Approve Application",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    console.log('✓ Application approved successfully');",
+                  "    console.log('Pilot UID:', response.pilot?.uid);",
+                  "    console.log('User roles updated to:', response.pilot ? '[customer, pilot]' : 'N/A');",
+                  "    console.log('Pilot document created in pilots collection');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"action\": \"approved\",\n  \"reviewNotes\": \"All documents verified. Pilot license valid. Background check completed.\",\n  \"assignedFleetManagerUid\": \"FM001\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/pilot-applications/{{applicationId}}/review",
+              "host": ["{{baseUrl}}"],
+              "path": ["pilot-applications", "{{applicationId}}", "review"]
+            },
+            "description": "Admin: Approve application. This performs atomic transaction:\n1. Updates application status to 'approved'\n2. Creates pilot document with same UID as user\n3. Adds 'pilot' role to user's roles array\n\nOptional: Assign fleet manager during approval"
+          }
+        },
+        {
+          "name": "8.6 Reject Application",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"action\": \"rejected\",\n  \"rejectionReason\": \"Pilot license has expired. Please renew your license and reapply.\",\n  \"reviewNotes\": \"License expired on 2025-12-31. Need valid license for approval.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/pilot-applications/{{applicationId}}/review",
+              "host": ["{{baseUrl}}"],
+              "path": ["pilot-applications", "{{applicationId}}", "review"]
+            },
+            "description": "Admin: Reject application with reason. User remains as customer and can reapply after fixing issues."
+          }
+        }
+      ],
+      "description": "Admin flow for reviewing and approving/rejecting pilot applications"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{accessToken}}",
+        "type": "string"
+      }
+    ]
+  }
+}

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hawk Aerosystem - Cross Platform</title>
+    <script>
+        // Capture real browser geolocation before react-native-web shim can strip it
+        window.__realGeolocation = window.navigator && window.navigator.geolocation;
+    </script>
+    <style>
+        /* Full height desktop container reset */
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background-color: #FAFAFA;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        /* Make the react-native-web root a flex container so the app fills the
+           viewport on every screen size (mobile, tablet, laptop, desktop).
+           Without this the app root only grows to its content height, which is
+           why full-screen screens appear to only occupy the top 1/3 - 1/4. */
+        #root {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+            min-height: 100vh;
+        }
+
+        @font-face {
+            src: url('url-to-font-if-needed');
+            font-family: 'MaterialIcons';
+        }
+
+        /* WEB ONLY: keep SVG icons from spilling outside their containers.
+           Android clips overflowing children natively, but the browser does not,
+           so any icon larger than a fixed-size parent would visually leak out.
+           These caps only bind when the parent has a definite size smaller than
+           the icon; icons inside auto-sized parents are completely unaffected.
+           Native (Android/iOS) builds never load this file, so their styling is
+           untouched. */
+        svg {
+            max-width: 100%;
+            max-height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="root"></div>
+    <div id="recaptcha-container"
+        style="position: absolute; bottom: 0; right: 0; width: 0; height: 0; overflow: hidden; visibility: hidden;"></div>
+</body>
+
+</html>

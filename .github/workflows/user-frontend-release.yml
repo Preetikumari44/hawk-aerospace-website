@@ -1,0 +1,151 @@
+name: User Frontend Release Notes
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'User_Frontend/**'
+
+permissions:
+  contents: write
+
+jobs:
+  generate-release:
+    name: Generate Release Notes
+    runs-on: ubuntu-latest
+    if: github.repository == 'hawkaerospaceuav/SuperApp' && !contains(github.event.head_commit.message, '[skip ci]')
+
+    steps:
+      - name: Checkout code from origin main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 2
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Read Version Name from Backend
+        id: get_version
+        run: |
+          VERSION_NAME=$(node -p "require('./Backend/public/apk/version.json').versionName")
+          echo "version_name=$VERSION_NAME" >> $GITHUB_OUTPUT
+          echo "tag_name=v${VERSION_NAME}" >> $GITHUB_OUTPUT
+
+      - name: Generate Detailed & Simple Release Notes
+        id: commit_details
+        run: |
+          # Read latest commit details from origin/main
+          export TAG_NAME="${{ steps.get_version.outputs.tag_name }}"
+          export COMMIT_SHA=$(git rev-parse HEAD)
+          export SHORT_SHA=$(git rev-parse --short HEAD)
+          export AUTHOR=$(git log -1 --format="%an <%ae>" HEAD)
+          export DATE=$(git log -1 --format="%ad" --date=format:'%Y-%m-%d %H:%M:%S UTC' HEAD)
+          export SUBJECT=$(git log -1 --format="%s" HEAD)
+          export BODY=$(git log -1 --format="%b" HEAD)
+
+          # Get file stats and file list in User_Frontend
+          git show --stat --format="" HEAD -- User_Frontend/ > /tmp/file_stat.txt
+          git show --name-status --format="" HEAD -- User_Frontend/ > /tmp/file_list.txt
+
+          if git rev-parse "$TAG_NAME" >/dev/null 2>&1; then
+            FINAL_TAG="${TAG_NAME}-${SHORT_SHA}"
+          else
+            FINAL_TAG="${TAG_NAME}"
+          fi
+          echo "final_tag=$FINAL_TAG" >> $GITHUB_OUTPUT
+
+          # Execute Node script to build non-technical and technical release notes
+          node - << 'EOF'
+          const fs = require('fs');
+
+          const tagName = process.env.TAG_NAME || 'v1.0.0';
+          const commitSha = process.env.COMMIT_SHA || '';
+          const shortSha = process.env.SHORT_SHA || '';
+          const author = process.env.AUTHOR || '';
+          const date = process.env.DATE || '';
+          const subject = process.env.SUBJECT || '';
+          const body = process.env.BODY || '';
+          const fileStat = fs.existsSync('/tmp/file_stat.txt') ? fs.readFileSync('/tmp/file_stat.txt', 'utf8').trim() : '';
+          const fileList = fs.existsSync('/tmp/file_list.txt') ? fs.readFileSync('/tmp/file_list.txt', 'utf8').trim() : '';
+
+          // Determine Change Type & Icon for non-technical readers
+          let changeCategory = '✨ User Frontend Update';
+          let icon = '📦';
+          const lowerSub = subject.toLowerCase();
+
+          if (lowerSub.startsWith('fix') || lowerSub.includes('bug') || lowerSub.includes('patch')) {
+            changeCategory = 'Bug Fix & Stability Improvement';
+            icon = '🐛';
+          } else if (lowerSub.startsWith('feat') || lowerSub.includes('add') || lowerSub.includes('new')) {
+            changeCategory = 'New Feature / Enhancement';
+            icon = '🚀';
+          } else if (lowerSub.startsWith('refactor') || lowerSub.includes('clean')) {
+            changeCategory = 'Code & Structure Enhancement';
+            icon = '♻️';
+          } else if (lowerSub.startsWith('perf') || lowerSub.includes('optimize')) {
+            changeCategory = 'Performance Optimization';
+            icon = '⚡';
+          } else if (lowerSub.startsWith('chore') || lowerSub.startsWith('build') || lowerSub.includes('update')) {
+            changeCategory = 'Maintenance & Configuration Update';
+            icon = '🔧';
+          }
+
+          // Format clean non-technical title
+          const cleanSubject = subject.replace(/^(feat|fix|refactor|perf|chore|build|docs|style)(\([^\)]+\))?:\s*/i, '');
+          const simpleTitle = cleanSubject.charAt(0).toUpperCase() + cleanSubject.slice(1);
+
+          // Identify affected app modules
+          const affectedModules = new Set();
+          if (fileList.includes('customerModule')) affectedModules.add('👤 Customer App & Screens');
+          if (fileList.includes('pilotModule')) affectedModules.add('🚁 Pilot App & Tools');
+          if (fileList.includes('fmModule')) affectedModules.add('🏢 Fleet Manager Module');
+          if (fileList.includes('salesaggregatorModule')) affectedModules.add('📈 Sales Aggregator Module');
+          if (fileList.includes('technicianModule')) affectedModules.add('🛠️ Technician Module');
+          if (fileList.includes('commonScreens')) affectedModules.add('📱 Common User Screens');
+          if (fileList.includes('components')) affectedModules.add('🎨 UI Components');
+          if (fileList.includes('firebase') || fileList.includes('auth')) affectedModules.add('🔐 Login & Authentication');
+          if (fileList.includes('payments') || fileList.includes('razorpay')) affectedModules.add('💳 Payments & Checkout');
+          if (fileList.includes('webpack') || fileList.includes('dist') || fileList.includes('package.json')) affectedModules.add('🌐 Web Build & Platform');
+
+          const moduleList = Array.from(affectedModules).length > 0 
+            ? Array.from(affectedModules).map(m => `- ${m}`).join('\n') 
+            : '- 📱 General User Frontend App';
+
+          // Build markdown content
+          let markdown = `## ${icon} Release ${tagName}\n\n`;
+          markdown += `### 📢 Overview (Simple Summary for Non-Technical Users)\n`;
+          markdown += `> **Category:** ${icon} **${changeCategory}**\n`;
+          markdown += `> **What Changed:** ${simpleTitle}\n\n`;
+
+          markdown += `#### 🎯 Affected App Areas:\n${moduleList}\n\n`;
+
+          if (body && body.trim().length > 0) {
+            markdown += `#### 💡 Details:\n${body.trim()}\n\n`;
+          }
+
+          markdown += `---\n\n`;
+          markdown += `### 📝 Technical Commit Information\n`;
+          markdown += `- **Commit SHA:** \`${commitSha}\` (\`${shortSha}\`)\n`;
+          markdown += `- **Author:** ${author}\n`;
+          markdown += `- **Commit Date:** ${date}\n`;
+          markdown += `- **Branch:** \`main\`\n\n`;
+
+          markdown += `**Full Commit Message:**\n\`\`\`text\n${subject}\n${body}\n\`\`\`\n\n`;
+
+          markdown += `---\n\n`;
+          markdown += `### 📊 File Stats in \`User_Frontend/\`\n\`\`\`text\n${fileStat || 'No stat changes'}\n\`\`\`\n\n`;
+          markdown += `### 📁 Modified Files\n\`\`\`text\n${fileList || 'No file list'}\n\`\`\`\n`;
+
+          fs.writeFileSync('/tmp/release_notes.md', markdown);
+          console.log('Successfully generated release notes!');
+          EOF
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.commit_details.outputs.final_tag }}
+          name: "v${{ steps.get_version.outputs.version_name }}"
+          body_path: /tmp/release_notes.md
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

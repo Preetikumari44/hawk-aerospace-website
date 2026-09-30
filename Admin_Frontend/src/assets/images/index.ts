@@ -1,0 +1,1 @@
+export const LoginScreenImage = require('./LoginScreenImage.png');

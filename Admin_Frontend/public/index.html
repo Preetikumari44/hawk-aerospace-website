@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hawk Aerosystem Portal</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦅</text></svg>">
+  <style>
+  /* 1. Force the core window layers to stay completely open */
+  html, body, #app-root {
+    height: 100% !important;
+    width: 100% !important;
+    margin: 0;
+    padding: 0;
+    background-color: #F8FAFC;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    overflow: hidden;
+  }
+  /* 🚀 2. THE CRITICAL ADDITION: Force any hidden intermediate wrapper divs created by React Native Web to fill the space */
+  #app-root > div {
+    height: 100% !important;
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+</style>
+</head>
+<body>
+  <div id="app-root"></div>
+</body>
+</html>

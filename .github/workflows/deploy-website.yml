@@ -1,0 +1,109 @@
+# Deploy the Hawk booking website (Next.js SSR, lives in Website/) to AWS EC2 :8083.
+# Runs on push to main ONLY when Website/** changes (plus manual dispatch).
+# Source is built ON the server so native deps match EC2 and NEXT_PUBLIC_*
+# values bake in there.
+#
+# Existing repo secrets reused: DEPLOY_KEY, DEPLOY_USER, DEPLOY_HOST,
+# REACT_APP_GOOGLE_MAPS_API_KEY (mapped to the build's GOOGLE_MAPS_KEY).
+# New repo secrets to add (exact names):
+#   RAZORPAY_KEY_ID,
+#   FIREBASE_API_KEY, FIREBASE_AUTH_DOMAIN, FIREBASE_PROJECT_ID,
+#   FIREBASE_STORAGE_BUCKET, FIREBASE_MESSAGING_SENDER_ID,
+#   FIREBASE_APP_ID, FIREBASE_MEASUREMENT_ID
+# Optional repo variables (vars.*): API_BASE_URL, FRONT_PORT, NEXT_PORT.
+# One-time server/console prereqs: see Website/deploy/README-newsite.md
+# (security-group port, Firebase authorized domain, Node 22+).
+
+name: Deploy Website
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'Website/**'
+      - '.github/workflows/deploy-website.yml'
+
+concurrency:
+  group: website-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy-website:
+    name: Deploy booking website to EC2
+    runs-on: ubuntu-latest
+    if: github.repository == 'hawkaerospaceuav/SuperApp'
+    env:
+      FRONT_PORT: ${{ vars.FRONT_PORT || '8083' }}
+      NEXT_PORT: ${{ vars.NEXT_PORT || '3002' }}
+      PM2_NAME: hawk-newsite
+      API_BASE_URL: ${{ vars.API_BASE_URL || format('http://{0}:3000/api', secrets.DEPLOY_HOST) }}
+      USE_SERVER_ENV: ${{ vars.USE_SERVER_ENV || '0' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup SSH for EC2 deploy
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H ${{ secrets.DEPLOY_HOST }} >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: Write production env (never committed)
+        if: env.USE_SERVER_ENV != '1'
+        run: |
+          cat > /tmp/hawk-newsite.env.production <<EOF
+          NEXT_PUBLIC_API_BASE_URL=${{ env.API_BASE_URL }}
+          NEXT_PUBLIC_API_FALLBACK_URL=
+          NEXT_PUBLIC_FIREBASE_API_KEY=${{ secrets.FIREBASE_API_KEY }}
+          NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=${{ secrets.FIREBASE_AUTH_DOMAIN }}
+          NEXT_PUBLIC_FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }}
+          NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=${{ secrets.FIREBASE_STORAGE_BUCKET }}
+          NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}
+          NEXT_PUBLIC_FIREBASE_APP_ID=${{ secrets.FIREBASE_APP_ID }}
+          NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=${{ secrets.FIREBASE_MEASUREMENT_ID }}
+          NEXT_PUBLIC_FIREBASE_TEST_MODE=
+          NEXT_PUBLIC_RAZORPAY_KEY_ID=${{ secrets.RAZORPAY_KEY_ID }}
+          NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=${{ secrets.REACT_APP_GOOGLE_MAPS_API_KEY }}
+          EOF
+          echo "WROTE_ENV=1" >> "$GITHUB_ENV"
+
+      - name: Pack source (no node_modules/.next/.git/secrets)
+        run: |
+          tar --exclude=node_modules --exclude=.next --exclude=.git --exclude=.turbo \
+              --exclude='.env' --exclude='.env.*' \
+              -czf /tmp/hawk-newsite.tar.gz -C Website .
+
+      - name: Upload bundle + env + nginx conf + server script
+        run: |
+          DEST="${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}"
+          scp -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
+            /tmp/hawk-newsite.tar.gz "$DEST:~/hawk-newsite.tar.gz"
+          if [ "${{ env.USE_SERVER_ENV }}" != "1" ]; then
+            scp -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
+              /tmp/hawk-newsite.env.production "$DEST:~/hawk-newsite.env.production"
+          fi
+          scp -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
+            Website/deploy/nginx-hawk-newsite.conf "$DEST:~/hawk-newsite-nginx.conf"
+          scp -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
+            Website/deploy/server-setup-newsite.sh "$DEST:~/hawk-newsite-setup.sh"
+
+      - name: Build + start on server
+        run: |
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
+              ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} \
+              "NEXT_PORT=${{ env.NEXT_PORT }} PM2_NAME=${{ env.PM2_NAME }} FRONT_PORT=${{ env.FRONT_PORT }} PUBLIC_IP=${{ secrets.DEPLOY_HOST }} BACKEND_CORS_UPDATE=1 bash ~/hawk-newsite-setup.sh"
+
+      - name: Verify public endpoint
+        run: |
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
+              ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} \
+              "curl -s -m 15 -o /dev/null -w 'public:%{http_code}\n' http://127.0.0.1:${{ env.FRONT_PORT }}/ \
+               && rm -f ~/hawk-newsite.tar.gz ~/hawk-newsite-nginx.conf ~/hawk-newsite-setup.sh"
+          if [ "${{ env.WROTE_ENV }}" = "1" ]; then
+            ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
+                ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} \
+                "rm -f ~/hawk-newsite.env.production"
+          fi
+          rm -f /tmp/hawk-newsite.tar.gz /tmp/hawk-newsite.env.production

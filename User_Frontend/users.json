@@ -1,0 +1,413 @@
+{"users": [
+{
+  "localId": "1n3QZ05jYYZheF6EYxTsrJCBTY13",
+  "email": "dwanmohite@gmail.com",
+  "emailVerified": false,
+  "displayName": "Sanchit Mohite",
+  "createdAt": "1782717582446",
+  "disabled": false,
+  "customAttributes": "{\"adminId\":\"ADM0058\",\"role\":\"DEPARTMENT_ADMIN\",\"department\":\"IT\",\"permissionsProfile\":\"default\"}"
+},
+{
+  "localId": "2MtOZi94LsdSypUINAj43DRh7B73",
+  "email": "kajubhai@gmail.com",
+  "emailVerified": false,
+  "displayName": "rutvik",
+  "createdAt": "1782985811857",
+  "disabled": false,
+  "customAttributes": "{\"adminId\":\"ADM0060\",\"role\":\"SUPER_ADMIN\",\"department\":\"Support\",\"permissionsProfile\":\"default\"}"
+},
+{
+  "localId": "34KJBIzbOhTuYUDSvFJ3NmRIRhk1",
+  "email": "demo@hawk.com",
+  "emailVerified": true,
+  "passwordHash": "qMQwIC/buk8YekQz+d8L214FB5LAsUuNWIaqgmYsoUtoDgHqFuTBSUCmupowlDUxbHzXX3s1upy0D1qPFRuvog==",
+  "salt": "9Drd6H4SgLfQTA==",
+  "displayName": "Demo Super Admin",
+  "createdAt": "1784181842039",
+  "disabled": false,
+  "customAttributes": "{\"adminId\":\"ADM0001\",\"role\":\"super_admin\",\"department\":\"Management\",\"permissionsProfile\":\"super_admin\"}",
+  "providerUserInfo": []
+},
+{
+  "localId": "86NCTov0Vj4t27OFYPnmN6FhZKnb",
+  "email": "agridroneparts487@rediffmail.com",
+  "emailVerified": false,
+  "displayName": "AgriDrone Parts",
+  "createdAt": "1782802964343",
+  "phoneNumber": "+919693693672",
+  "disabled": false,
+  "providerUserInfo": []
+},
+{
+  "localId": "EF3kjiOXbCQVYfTO8CvbAvsK28R2",
+  "email": "superadmin1@hawk.com",
+  "emailVerified": false,
+  "passwordHash": "6DkFbgyBKMIaXzewg9OF0ZqXQY+jICejdisXlnx0tvKGhCDrVl9cGpih/H8akqsXQX0oUrOaHGSnyuRLAu/6Sw==",
+  "salt": "tN3AxCGNtvCyRQ==",
+  "createdAt": "1784089281007",
+  "disabled": false,
+  "providerUserInfo": []
+},
+{
+  "localId": "FIKrfOmTiP9gB5kVjInTlTkZxy7f",
+  "email": "agritechsupplies849@outlook.com",
+  "emailVerified": false,
+  "displayName": "AgriTech Supplies",
+  "createdAt": "1782802969303",
+  "phoneNumber": "+919669728780",
+  "disabled": false,
+  "providerUserInfo": []
+},
+{
+  "localId": "Jt0QI56jLmeDsS7nZSyPeoM7jtI8",
+  "email": "greentechmarketplace313@gmail.com",
+  "emailVerified": false,
+  "displayName": "GreenTech Marketplace",
+  "createdAt": "1782802961713",
+  "phoneNumber": "+919746771219",
+  "disabled": false,
+  "providerUserInfo": []
+},
+{
+  "localId": "SxsHQj2AfeWFmX8tH2tfc0ps9sU2",
+  "lastSignedInAt": "1785993228878",
+  "createdAt": "1784172955859",
+  "phoneNumber": "+918080808080",
+  "providerUserInfo": []
+},
+{
+  "localId": "YSApuie3mRIkc42bm5orIeh6Yktu",
+  "email": "farmequippro5@rediffmail.com",
+  "emailVerified": false,
+  "displayName": "FarmEquip Pro",
+  "createdAt": "1782802959024",
+  "phoneNumber": "+919793940586",
+  "disabled": false,
+  "providerUserInfo": []
+},
+{
+  "localId": "dept_admin_booking_001",
+  "email": "sneha.patel@hawk.com",
+  "emailVerified": true,
+  "passwordHash": "BxEqGmAaGp0t9iX/Abc96Fg1Y66oGXm2Voidudyu+lu2V6aymJzlM4S5mUuvHWh0/And+JNsaaafrQASBaDJKA==",
+  "salt": "x+v3NXIWqLos2g==",
+  "displayName": "Sneha Patel",
+  "photoUrl": "https://ui-avatars.com/api/?name=Sneha+Patel&background=2E7D32&color=fff",
+  "createdAt": "1782475817346",
+  "disabled": false,
+  "customAttributes": "{\"adminId\":\"ADM0022\",\"role\":\"DEPARTMENT_ADMIN\",\"department\":\"Booking\",\"permissionsProfile\":\"DEPARTMENT_ADMIN\"}",
+  "providerUserInfo": []
+},
+{
+  "localId": "dept_admin_compliance_001",
+  "email": "ravi.shankar@hawk.com",
+  "emailVerified": true,
+  "passwordHash": "lV9y6HBLumlgnOBxLYGZB1b+oet5QkJDFqpdoLOSbE4SVk9xArUOpVB5jPrEpb0Q2/mDl+6d36xMAJRpjnEqGQ==",
+  "salt": "asCbtqBTfpg/ZQ==",
+  "displayName": "Ravi Shankar",
+  "photoUrl": "https://ui-avatars.com/api/?name=Ravi+Shankar&background=2E7D32&color=fff",
+  "createdAt": "1782475830592",
+  "disabled": false,
+  "customAttributes": "{\"adminId\":\"ADM0026\",\"role\":\"DEPARTMENT_ADMIN\",\"department\":\"Compliance\",\"permissionsProfile\":\"DEPARTMENT_ADMIN\"}",
+  "providerUserInfo": []
+},
+{
+  "localId": "dept_admin_customer_001",
+  "email": "arjun.reddy@hawk.com",
+  "emailVerified": true,
+  "passwordHash": "JsFTfnVbZ/KEFV5TZS813yKqf7ThhDqadQd4TND3l356C3GdlT/fXPTZry9oVFYByG5zHPEJINw3CgvSHe+Hiw==",
+  "salt": "cTgslZJAnTI5bg==",
+  "displayName": "Arjun Reddy",
+  "photoUrl": "https://ui-avatars.com/api/?name=Arjun+Reddy&background=2E7D32&color=fff",
+  "createdAt": "1782475818976",
+  "disabled": false,
+  "customAttributes": "{\"adminId\":\"ADM0023\",\"role\":\"DEPARTMENT_ADMIN\",\"department\":\"Customer Success\",\"permissionsProfile\":\"DEPARTMENT_ADMIN\"}",
+  "providerUserInfo": []
+},
+{
+  "localId": "dept_admin_drone_001",
+  "email": "aman.mehta@hawk.com",
+  "emailVerified": true,
+  "passwordHash": "pmQRMkyYlupwFjDuphPWY563mXJ8lpKhvk9ARLcTFLG66lijs8b0yo97bPu2EZI7YgNiRWAxUPz+bnWhUC8QLQ==",
+  "salt": "WBuw+MFAUR9J4Q==",
+  "displayName": "Aman Mehta",
+  "photoUrl": "https://ui-avatars.com/api/?name=Aman+Mehta&background=2E7D32&color=fff",
+  "createdAt": "1782475815647",
+  "disabled": false,
+  "customAttributes": "{\"adminId\":\"ADM0021\",\"role\":\"DEPARTMENT_ADMIN\",\"department\":\"Drone Management\",\"permissionsProfile\":\"DEPARTMENT_ADMIN\"}",
+  "providerUserInfo": []
+},
+{
+  "localId": "dept_admin_pilot_001",
+  "email": "vikram.singh@hawk.com",
+  "emailVerified": true,
+  "passwordHash": "vfQCaySiGJQETro9fhKSMJ/c+TzGEc1NkTDRn34mBfJk8EamrPa1QD1GXuSrJxJ4z1HBSbN2RveJ4QiysdsJPw==",
+  "salt": "NQgjTXyRWxFXXQ==",
+  "displayName": "Vikram Singh",
+  "photoUrl": "https://ui-avatars.com/api/?name=Vikram+Singh&background=2E7D32&color=fff",
+  "createdAt": "1782475826352",
+  "disabled": false,
+  "customAttributes": "{\"adminId\":\"ADM0024\",\"role\":\"DEPARTMENT_ADMIN\",\"department\":\"Pilot Management\",\"permissionsProfile\":\"DEPARTMENT_ADMIN\"}",
+  "providerUserInfo": []
+},
+{
+  "localId": "dept_admin_revenue_001",
+  "email": "anita.desai@hawk.com",
+  "emailVerified": true,
+  "passwordHash": "1t6DlbvU1QeiH5ZcolnW9PAM4+fnL0a2ah1sUw4QYlgbVCwNTgmis/CBpbD626LGyCrhzOcsXPxCMZudfKwgzQ==",
+  "salt": "yPOARpkuUyAA+A==",
+  "displayName": "Anita Desai",
+  "photoUrl": "https://ui-avatars.com/api/?name=Anita+Desai&background=2E7D32&color=fff",
+  "createdAt": "1782475828783",
+  "disabled": false,
+  "customAttributes": "{\"adminId\":\"ADM0025\",\"role\":\"DEPARTMENT_ADMIN\",\"department\":\"Revenue\",\"permissionsProfile\":\"DEPARTMENT_ADMIN\"}",
+  "providerUserInfo": []
+},
+{
+  "localId": "district_admin_bangalore_001",
+  "email": "karthik.iyer@hawk.com",
+  "emailVerified": true,
+  "passwordHash": "r3a7yChzl/yvZxJlAvmhOb+1V3w4AcRKcZMRxLXgvWa1TDLzR5cZZ0yTkKOVIoRjOwhYsGKGVXA+KSfDIS9Dsg==",
+  "salt": "T7634LjMh7j59Q==",
+  "displayName": "Karthik Iyer",
+  "photoUrl": "https://ui-avatars.com/api/?name=Karthik+Iyer&background=F57C00&color=fff",
+  "createdAt": "1782475824555",
+  "disabled": true,
+  "customAttributes": "{\"adminId\":\"ADM0057\",\"role\":\"DISTRICT_ADMIN\",\"department\":\"Incident\",\"permissionsProfile\":\"DISTRICT_ADMIN\"}",
+  "providerUserInfo": []
+},
+{
+  "localId": "district_admin_mumbai_001",
+  "email": "john.doe@hawk.com",
+  "emailVerified": true,
+  "passwordHash": "foZR6B4j9hegGFFohn0q8xIVip6IyoWDKGgrQOvJsAK9n5JZs6J7ntx75adTmbJZLJP0vkQTKfV/ohcR8VuPOg==",
+  "salt": "0XCr2hSW/t2Vxg==",
+  "displayName": "John Doe",
+  "photoUrl": "https://ui-avatars.com/api/?name=John+Doe&background=F57C00&color=fff",
+  "createdAt": "1782475820933",
+  "disabled": false,
+  "customAttributes": "{\"adminId\":\"ADM0055\",\"role\":\"DISTRICT_ADMIN\",\"department\":\"Customer Success\",\"permissionsProfile\":\"DISTRICT_ADMIN\"}",
+  "providerUserInfo": []
+},
+{
+  "localId": "district_admin_pune_001",
+  "email": "meera.kulkarni@hawk.com",
+  "emailVerified": true,
+  "passwordHash": "d1Ie9yZEWZzOtPImHVZYiIpR3hujEVDuT8B8DN/GBBRQr+hkwsFIY11ZcVjk8HqWLQIXh2TBKzy64bxa85L1Tg==",
+  "salt": "7MFy3v9wTYzJVQ==",
+  "displayName": "Meera Kulkarni",
+  "photoUrl": "https://ui-avatars.com/api/?name=Meera+Kulkarni&background=F57C00&color=fff",
+  "createdAt": "1782475822767",
+  "disabled": false,
+  "customAttributes": "{\"adminId\":\"ADM0056\",\"role\":\"DISTRICT_ADMIN\",\"department\":\"Operations\",\"permissionsProfile\":\"DISTRICT_ADMIN\"}",
+  "providerUserInfo": []
+},
+{
+  "localId": "dnf8SpcN7ISj4y0LpoVDBzY716n1",
+  "email": "ramesh@hawkaero.com",
+  "emailVerified": false,
+  "displayName": "Ramesh ",
+  "createdAt": "1783073107684",
+  "disabled": false,
+  "customAttributes": "{\"adminId\":\"ADM0062\",\"role\":\"DISTRICT_ADMIN\",\"department\":\"IT\",\"permissionsProfile\":\"default\"}"
+},
+{
+  "localId": "hW78JJKJqgyAbfgXpostx3FXTKzZ",
+  "email": "kisanequipmentco.577@gmail.com",
+  "emailVerified": false,
+  "displayName": "Kisan Equipment Co.",
+  "createdAt": "1782802966858",
+  "phoneNumber": "+919660407793",
+  "disabled": false,
+  "providerUserInfo": []
+},
+{
+  "localId": "i5aJ9Q0m9efgpFW4Bpsv7pTyPHz1",
+  "email": "superadmin@hawk.com",
+  "emailVerified": true,
+  "passwordHash": "yAtHwM7doYgGOw3MyKPnaaukG4YtVnK/ICG3BWDjqAbfLm9voYn8isv1gQBEyrgg5pQMSFq2JuriG3lmUazO5g==",
+  "salt": "hEzkFCSu5Q8nLQ==",
+  "displayName": "Super Admin",
+  "createdAt": "1784091707881",
+  "disabled": false,
+  "customAttributes": "{\"adminId\":\"ADM0001\",\"role\":\"super_admin\",\"department\":\"Management\",\"permissionsProfile\":\"super_admin\"}",
+  "providerUserInfo": []
+},
+{
+  "localId": "ioCdHasXus1b183lJiVxyeTGdJzr",
+  "email": "aeroagrisolutions591@yahoo.com",
+  "emailVerified": false,
+  "displayName": "AeroAgri Solutions",
+  "createdAt": "1782802960433",
+  "phoneNumber": "+919247489969",
+  "disabled": false,
+  "providerUserInfo": []
+},
+{
+  "localId": "j27l7ddVakbOXqTOeGkP91ZYdWuz",
+  "email": "ruralinnovationstore346@yahoo.com",
+  "emailVerified": false,
+  "displayName": "Rural Innovation Store",
+  "createdAt": "1782802962940",
+  "phoneNumber": "+919451677469",
+  "disabled": false,
+  "providerUserInfo": []
+},
+{
+  "localId": "jGHyr8Tz3tZnmcXwr2Gk5OkhXNw2",
+  "lastSignedInAt": "1784712647215",
+  "createdAt": "1783519131713",
+  "phoneNumber": "+918655703990",
+  "providerUserInfo": []
+},
+{
+  "localId": "jfLxe9saYCPOyrfrB3TruSKE0O83",
+  "lastSignedInAt": "1786001574153",
+  "createdAt": "1784712756901",
+  "phoneNumber": "+918888888889",
+  "providerUserInfo": []
+},
+{
+  "localId": "kgnNpUFg3mgtODPUj3WdDsLJyHmF",
+  "email": "dronehubindia935@yahoo.com",
+  "emailVerified": false,
+  "displayName": "DroneHub India",
+  "createdAt": "1782802957408",
+  "phoneNumber": "+919387234182",
+  "disabled": false,
+  "providerUserInfo": []
+},
+{
+  "localId": "oBjAByUI9CvdiVsRRHo9HE3G8Zfu",
+  "email": "farmtechdirect829@rediffmail.com",
+  "emailVerified": false,
+  "displayName": "FarmTech Direct",
+  "createdAt": "1782802965507",
+  "phoneNumber": "+919075747299",
+  "disabled": true,
+  "providerUserInfo": []
+},
+{
+  "localId": "rvjmrclzUCimXTtBgGXjI14P4615",
+  "email": "agrosupplychain336@outlook.com",
+  "emailVerified": false,
+  "displayName": "AgroSupply Chain",
+  "createdAt": "1782802968088",
+  "phoneNumber": "+919844197530",
+  "disabled": false,
+  "providerUserInfo": []
+},
+{
+  "localId": "s1GK0vAM8iRXzCDtyLR4pheZzF73",
+  "email": "admin@hawk.com",
+  "emailVerified": false,
+  "displayName": "Admin",
+  "createdAt": "1784284031081",
+  "disabled": false,
+  "customAttributes": "{\"adminId\":\"ADM0002\",\"role\":\"STATE_ADMIN\",\"department\":\"Support\",\"permissionsProfile\":\"default\"}"
+},
+{
+  "localId": "state_admin_karnataka_001",
+  "email": "rajesh.kumar@hawk.com",
+  "emailVerified": true,
+  "passwordHash": "p5R0v24NwOAK0xm9zJQPJdwF2qgQIszyamXFWXx24/q0obivze+QPvok+1C9r8fcPSyaUznJTrDAjuZpPSPOVw==",
+  "salt": "CnJSV1+m3SgxSw==",
+  "displayName": "Rajesh Kumar",
+  "photoUrl": "https://ui-avatars.com/api/?name=Rajesh+Kumar&background=1565C0&color=fff",
+  "createdAt": "1782475813956",
+  "disabled": false,
+  "customAttributes": "{\"adminId\":\"ADM0002\",\"role\":\"STATE_ADMIN\",\"department\":\"Operations\",\"permissionsProfile\":\"STATE_ADMIN\"}",
+  "providerUserInfo": []
+},
+{
+  "localId": "state_admin_maha_001",
+  "email": "priya.sharma@hawk.com",
+  "emailVerified": true,
+  "passwordHash": "tgltUTwv/f4TJTEZVFrpC9kKpuGBVywBPxdqvv1PFTcIUpi7gYt4xMTTy58bKwoCj4oGF25K2AEQdOYA6qo8PQ==",
+  "salt": "RGySnXgVKIzMFg==",
+  "displayName": "Priya Sharma",
+  "photoUrl": "https://ui-avatars.com/api/?name=Priya+Sharma&background=1565C0&color=fff",
+  "createdAt": "1782475812075",
+  "disabled": false,
+  "customAttributes": "{\"adminId\":\"ADM0001\",\"role\":\"STATE_ADMIN\",\"department\":\"Customer Success\",\"permissionsProfile\":\"STATE_ADMIN\"}",
+  "providerUserInfo": []
+},
+{
+  "localId": "super_admin_uid_001",
+  "email": "vivek.mehta@hawk.com",
+  "emailVerified": true,
+  "passwordHash": "ox33XIDz1kGBW8+UIi+cr0mw6paRoeIRyTJiHjsJYvId3C5OdhMFrQKk0hQ7EBqJuk631mJQdKOwk9vvEQlq3g==",
+  "salt": "w+TgBibg65yEpQ==",
+  "displayName": "Vivek Mehta",
+  "photoUrl": "https://ui-avatars.com/api/?name=Vivek+Mehta&background=0D47A1&color=fff",
+  "createdAt": "1782475810288",
+  "disabled": false,
+  "customAttributes": "{\"adminId\":\"ADM0000\",\"role\":\"SUPER_ADMIN\",\"department\":\"Administration\",\"permissionsProfile\":\"SUPER_ADMIN\"}",
+  "providerUserInfo": []
+},
+{
+  "localId": "tgYr2Kaz6sOQx0JM3DiVLMIb4uG2",
+  "email": "sanchitmohite15@gmail.com",
+  "emailVerified": false,
+  "displayName": "Sanchit Mohite",
+  "createdAt": "1782720455751",
+  "disabled": true,
+  "customAttributes": "{\"adminId\":\"ADM0059\",\"role\":\"DEPARTMENT_ADMIN\",\"department\":\"Operations\",\"permissionsProfile\":\"DEPARTMENT_ADMIN\"}"
+},
+{
+  "localId": "uMCJVmECNlaUaZ8O2PIHCx68Zn73",
+  "lastSignedInAt": "1785919641987",
+  "createdAt": "1784090383283",
+  "phoneNumber": "+919999999998",
+  "providerUserInfo": []
+},
+{
+  "localId": "uRxYnExjYjbIaF1DMk6Seka2lwy1",
+  "lastSignedInAt": "1785911375989",
+  "createdAt": "1784188498200",
+  "phoneNumber": "+919898989898",
+  "providerUserInfo": []
+},
+{
+  "localId": "uwjEeBt7zcMUkXoddu4guUxSEMw2",
+  "lastSignedInAt": "1786000999397",
+  "createdAt": "1784095455231",
+  "phoneNumber": "+918888888888",
+  "providerUserInfo": []
+},
+{
+  "localId": "vbtFcOyvkMf4cud1EI6WCNC2FqB3",
+  "lastSignedInAt": "1784614832570",
+  "createdAt": "1784614832570",
+  "phoneNumber": "+918356935735",
+  "providerUserInfo": []
+},
+{
+  "localId": "w8GCtoWqZHXbjsz8Z4zojMmnETp2",
+  "lastSignedInAt": "1784089082744",
+  "createdAt": "1784009464711",
+  "phoneNumber": "+919999999999",
+  "providerUserInfo": []
+},
+{
+  "localId": "wt6g0HfJwPSy9DGy14MFisQNJ4h1",
+  "email": "santosh@gmail.com",
+  "emailVerified": false,
+  "displayName": "Rudra",
+  "createdAt": "1783016755011",
+  "disabled": false,
+  "customAttributes": "{\"adminId\":\"ADM0061\",\"role\":\"DEPARTMENT_ADMIN\",\"department\":\"Operations\",\"permissionsProfile\":\"default\"}"
+},
+{
+  "localId": "zzDSPRwSVIaf5imrx6DKPfbspUh2",
+  "email": "superadmi@hawk.com",
+  "emailVerified": true,
+  "passwordHash": "Btn87/IlqwwHRBBCaGYV5xcv7aisNXzT8jaSjn9V1okHdWX4GBS2RFy8gdze4Ru0Eg335wK9RRYfPfD6dT2ziw==",
+  "salt": "Dhlk5xPwMh4dEg==",
+  "displayName": "Super Admin",
+  "createdAt": "1784095031090",
+  "disabled": false,
+  "customAttributes": "{\"adminId\":\"ADM0001\",\"role\":\"super_admin\",\"department\":\"Management\",\"permissionsProfile\":\"super_admin\"}",
+  "providerUserInfo": []
+}]}

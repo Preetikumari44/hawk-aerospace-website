@@ -1,0 +1,13 @@
+# Deploy
+deploy/*
+docs/
+backend.tar.gz
+.vscode/
+bookingModule/
+webserver.log
+# Secrets
+Backend/service-account-old.json
+Backend/service-account-new.json
+
+# Large APK
+Backend/public/apk/*.apk

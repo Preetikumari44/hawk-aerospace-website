@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1052847495761",
+    "project_id": "aerosystem-2d36c",
+    "storage_bucket": "aerosystem-2d36c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1052847495761:android:b4a9e561be42e2c1e43670",
+        "android_client_info": {
+          "package_name": "com.pilotmodule"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA7AeI2-koVWlJWMq4OsnuqONUrE7UMf3s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
