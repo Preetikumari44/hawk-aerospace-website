@@ -1,0 +1,3 @@
+export const inputCls =
+  "min-h-[54px] w-full rounded-[10px] border-[1.5px] border-[#cdd6c9] bg-[#f7f9f5] px-4 py-3.5 text-base text-[#17211b] transition-[border-color,box-shadow,background] placeholder:text-[#8a968f] hover:border-[#aab8a6] focus:border-[#1d6b3d] focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#1d6b3d]/20 aria-[invalid=true]:border-[#b3382f] aria-[invalid=true]:bg-white aria-[invalid=true]:ring-4 aria-[invalid=true]:ring-[#b3382f]/15 read-only:cursor-default read-only:bg-[#eaeee6] read-only:text-[#3f4d43]";
+export const labelCls = "mb-2.5 block text-base font-semibold leading-snug text-[#17211b]";

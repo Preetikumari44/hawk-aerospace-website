@@ -1,0 +1,98 @@
+# Optional local overrides: put KEY=value lines in backend/.env (see .env.example).
+spring:
+  config:
+    import: "optional:file:.env[.properties]"
+  application:
+    name: hawk-contact-api
+
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/hawk_contact?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&characterEncoding=utf8}
+    username: ${DB_USERNAME:hawk_contact}
+    password: ${DB_PASSWORD:}
+    hikari:
+      connection-timeout: 5000
+      maximum-pool-size: 10
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none          # schema is owned by Flyway (src/main/resources/db/migration)
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true # adopt an existing contact_messages table without touching its data
+    baseline-version: 1
+
+  mail:
+    host: ${SMTP_HOST:}
+    port: ${SMTP_PORT:465}
+    username: ${SMTP_USERNAME:}
+    password: ${SMTP_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: ${SMTP_AUTH:true}   # was hard-coded true: a no-login relay (Mailpit) then failed every send
+          ssl:
+            enable: ${SMTP_SSL:true}
+          starttls:
+            enable: ${SMTP_STARTTLS:false}
+          connectiontimeout: 10000
+          timeout: 10000
+          writetimeout: 10000
+
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: false
+
+server:
+  port: ${SERVER_PORT:8080}
+  error:
+    include-stacktrace: never
+    include-message: never
+    include-binding-errors: never
+  tomcat:
+    max-swallow-size: 64KB
+    max-http-form-post-size: 64KB
+  max-http-request-header-size: 16KB
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never
+  health:
+    mail:
+      enabled: false
+
+app:
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000}
+  duplicate:
+    window-minutes: ${DUPLICATE_WINDOW_MINUTES:10}
+  rate-limit:
+    max-requests: ${RATE_LIMIT_MAX_REQUESTS:5}
+    window-seconds: ${RATE_LIMIT_WINDOW_SECONDS:600}
+    trust-forwarded-headers: ${TRUST_FORWARDED_HEADERS:false}
+  request:
+    max-body-bytes: 32768
+  mail:
+    host: ${SMTP_HOST:}
+    recipient: ${MAIL_RECIPIENT:}
+    from: ${MAIL_FROM:form@hawkaerosystem.co.uk}
+    from-name: ${MAIL_FROM_NAME:Website Contact Form}
+  notification:
+    retry-enabled: true
+    max-attempts: 5
+    retry-delay-ms: 300000
+
+logging:
+  level:
+    root: INFO
+    com.hawkaero: INFO

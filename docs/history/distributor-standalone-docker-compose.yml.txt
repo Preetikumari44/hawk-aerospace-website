@@ -1,0 +1,45 @@
+# Local development / test database. MySQL 8.4 LTS with a persistent named volume and a health check.
+# Credentials come from .env (copy .env.example to .env first); there are no passwords in this file.
+#
+#   docker compose up -d mysql        # start MySQL, wait until "healthy"
+#   docker compose ps                 # STATUS should show (healthy)
+#
+# Optional: a local SMTP sink so you can see admin notification e-mails without real SMTP credentials:
+#   docker compose --profile mail-dev up -d mailpit      # web UI: http://localhost:8025, SMTP: localhost:1025
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: hawk-distributor-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD in .env (copy .env.example)}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-hawk_distributor}
+      MYSQL_USER: ${DB_USERNAME:?Set DB_USERNAME in .env (copy .env.example)}
+      MYSQL_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env (copy .env.example)}
+      TZ: UTC
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    ports:
+      # Bound to localhost only. Change the left side if 3306 is already used (and change DB_URL to match).
+      - "127.0.0.1:${MYSQL_HOST_PORT:-3306}:3306"
+    volumes:
+      - hawk_mysql_data:/var/lib/mysql
+    healthcheck:
+      # 127.0.0.1 (TCP) on purpose: during first-time init MySQL runs a temporary socket-only server that must not count as healthy.
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u root -p\"$$MYSQL_ROOT_PASSWORD\" --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: hawk-distributor-mailpit
+    profiles: ["mail-dev"]
+    ports:
+      - "127.0.0.1:1025:1025"   # SMTP
+      - "127.0.0.1:8025:8025"   # web UI
+
+volumes:
+  hawk_mysql_data:

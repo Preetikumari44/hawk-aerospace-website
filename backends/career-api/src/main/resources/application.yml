@@ -1,0 +1,75 @@
+server:
+  port: ${PORT:8080}
+  shutdown: graceful
+  error:
+    include-message: never
+    include-stacktrace: never
+    include-binding-errors: never
+  tomcat:
+    connection-timeout: 20s
+    max-swallow-size: 16MB
+
+spring:
+  application:
+    name: hawk-career-backend
+  web:
+    resources:
+      add-mappings: false          # nothing is served statically; uploads are never exposed
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/hawk_career?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC}
+    username: ${DB_USERNAME:}
+    password: ${DB_PASSWORD:}
+    hikari:
+      connection-timeout: 10000
+      maximum-pool-size: 10
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none               # the existing schema is never altered by the application
+      naming:
+        # The legacy table uses camelCase columns (fullName, hasLicense...). Keep names exactly as mapped.
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate.jdbc.time_zone: UTC
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: ${UPLOAD_MAX_FILE_SIZE:5MB}
+      max-request-size: ${UPLOAD_MAX_REQUEST_SIZE:12MB}
+  mail:
+    # Local default points at a development mail sink (e.g. MailHog on 1025). Production values come from the environment.
+    host: ${SMTP_HOST:localhost}
+    port: ${SMTP_PORT:1025}
+    username: ${SMTP_USERNAME:}
+    password: ${SMTP_PASSWORD:}
+    properties:
+      mail.smtp.auth: ${SMTP_AUTH:false}
+      mail.smtp.ssl.enable: ${SMTP_SSL:false}
+      mail.smtp.ssl.checkserveridentity: true
+      mail.smtp.starttls.enable: ${SMTP_STARTTLS:false}
+      mail.smtp.connectiontimeout: 10000
+      mail.smtp.timeout: 15000
+      mail.smtp.writetimeout: 15000
+
+app:
+  storage:
+    root: ${STORAGE_ROOT:./storage}
+  upload:
+    max-file-size: ${UPLOAD_MAX_FILE_SIZE:5MB}
+    require-license-when-licensed: ${REQUIRE_LICENSE_FILE:false}
+  mail:
+    from: ${MAIL_FROM:}
+    from-name: ${MAIL_FROM_NAME:Hawk Aero Careers}
+    admin-to: ${ADMIN_NOTIFICATION_EMAIL:}
+  notification:
+    max-attempts: 5
+    retry-interval: PT5M
+    retry-initial-delay: PT1M
+    retry-batch-size: 20
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000}
+
+logging:
+  level:
+    root: INFO
+    com.hawkaerosystem.career: INFO

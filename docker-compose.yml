@@ -1,0 +1,158 @@
+# Hawk Aerospace - complete local stack.  Start:  scripts/start.ps1 (Windows) or scripts/start.sh
+# Stop (data kept):  docker compose down      NEVER add -v unless you intend to delete all stored data.
+name: hawk-aerospace
+
+services:
+  mysql:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD in .env (copy .env.example)}
+      CONTACT_DB_PASSWORD: ${CONTACT_DB_PASSWORD:?Set CONTACT_DB_PASSWORD in .env}
+      CAREER_DB_PASSWORD: ${CAREER_DB_PASSWORD:?Set CAREER_DB_PASSWORD in .env}
+      DISTRIBUTOR_DB_PASSWORD: ${DISTRIBUTOR_DB_PASSWORD:?Set DISTRIBUTOR_DB_PASSWORD in .env}
+      TZ: UTC
+    command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci"]
+    ports:
+      - "127.0.0.1:${MYSQL_HOST_PORT:-3307}:3306"      # localhost only; 3307 avoids clashing with a local MySQL on 3306
+    volumes:
+      - hawk_mysql_data:/var/lib/mysql                  # persistent: survives restarts and `docker compose down`
+      - ./db/init:/docker-entrypoint-initdb.d:ro        # first start only (empty volume)
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p\"$$MYSQL_ROOT_PASSWORD\" --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 40s
+
+  mailpit:                       # local SMTP sink + web UI so notification e-mails can be seen without real SMTP
+    image: axllent/mailpit:latest
+    restart: unless-stopped
+    profiles: ["mail-dev"]
+    ports:
+      - "127.0.0.1:8025:8025"    # web UI  http://localhost:8025
+
+  contact-api:
+    build: ./backends/contact-api
+    restart: unless-stopped
+    depends_on:
+      mysql: { condition: service_healthy }
+    environment:
+      SERVER_PORT: "8080"
+      DB_URL: jdbc:mysql://mysql:3306/hawk_contact?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&characterEncoding=utf8
+      DB_USERNAME: hawk_contact
+      DB_PASSWORD: ${CONTACT_DB_PASSWORD}
+      SMTP_HOST: ${SMTP_HOST:?Set SMTP_HOST in .env}
+      SMTP_PORT: ${SMTP_PORT:-1025}
+      SMTP_AUTH: ${SMTP_AUTH:-false}      # was missing: the contact backend hard-coded auth=true, so a no-login relay (Mailpit) failed every send
+      SMTP_USERNAME: ${SMTP_USERNAME:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      SMTP_SSL: ${SMTP_SSL:-false}
+      SMTP_STARTTLS: ${SMTP_STARTTLS:-false}
+      MAIL_FROM: ${MAIL_FROM:?Set MAIL_FROM in .env}
+      MAIL_FROM_NAME: Website Contact Form
+      MAIL_RECIPIENT: ${CONTACT_NOTIFICATION_EMAIL:?Set CONTACT_NOTIFICATION_EMAIL in .env}
+      CORS_ALLOWED_ORIGINS: ${PUBLIC_SITE_ORIGIN:-http://localhost:3000}
+      # Safe here: only the Next.js proxy (same private network) can reach this port; it forwards the visitor IP.
+      TRUST_FORWARDED_HEADERS: "true"
+    ports:
+      - "127.0.0.1:${CONTACT_HOST_PORT:-8081}:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 60s
+
+  career-api:
+    build: ./backends/career-api
+    restart: unless-stopped
+    depends_on:
+      mysql: { condition: service_healthy }
+    environment:
+      PORT: "8080"
+      DB_URL: jdbc:mysql://mysql:3306/hawk_career?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
+      DB_USERNAME: hawk_career
+      DB_PASSWORD: ${CAREER_DB_PASSWORD}
+      STORAGE_ROOT: /data/uploads
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT:-1025}
+      SMTP_AUTH: ${SMTP_AUTH:-false}
+      SMTP_USERNAME: ${SMTP_USERNAME:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      SMTP_SSL: ${SMTP_SSL:-false}
+      SMTP_STARTTLS: ${SMTP_STARTTLS:-false}
+      MAIL_FROM: ${MAIL_FROM}
+      MAIL_FROM_NAME: Hawk Aero Careers
+      ADMIN_NOTIFICATION_EMAIL: ${CAREER_NOTIFICATION_EMAIL:?Set CAREER_NOTIFICATION_EMAIL in .env}
+      CORS_ALLOWED_ORIGINS: ${PUBLIC_SITE_ORIGIN:-http://localhost:3000}
+    volumes:
+      - hawk_career_uploads:/data/uploads             # CVs / licences, persistent, never served over HTTP
+    ports:
+      - "127.0.0.1:${CAREER_HOST_PORT:-8082}:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/api/health/ready || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 60s
+
+  distributor-api:
+    build: ./backends/distributor-api
+    restart: unless-stopped
+    depends_on:
+      mysql: { condition: service_healthy }
+    environment:
+      SERVER_PORT: "8080"
+      DB_URL: jdbc:mysql://mysql:3306/hawk_distributor?connectionTimeZone=UTC&allowPublicKeyRetrieval=true&sslMode=PREFERRED
+      DB_USERNAME: hawk_distributor
+      DB_PASSWORD: ${DISTRIBUTOR_DB_PASSWORD}
+      MAIL_HOST: ${SMTP_HOST}
+      MAIL_PORT: ${SMTP_PORT:-1025}
+      MAIL_USERNAME: ${SMTP_USERNAME:-}
+      MAIL_PASSWORD: ${SMTP_PASSWORD:-}
+      MAIL_SMTP_AUTH: ${SMTP_AUTH:-false}
+      MAIL_STARTTLS_ENABLED: ${SMTP_STARTTLS:-false}
+      MAIL_STARTTLS_REQUIRED: "false"
+      MAIL_SSL_ENABLED: ${SMTP_SSL:-false}
+      MAIL_FROM: ${MAIL_FROM}
+      ADMIN_NOTIFICATION_EMAIL: ${DISTRIBUTOR_NOTIFICATION_EMAIL:?Set DISTRIBUTOR_NOTIFICATION_EMAIL in .env}
+      CORS_ALLOWED_ORIGINS: ${PUBLIC_SITE_ORIGIN:-http://localhost:3000}
+      STORAGE_ROOT: /data/uploads
+      FORWARD_HEADERS_STRATEGY: framework             # private network: the Next.js proxy supplies X-Forwarded-For
+      ADMIN_USERNAME: ${DISTRIBUTOR_ADMIN_USERNAME:-admin}
+      ADMIN_PASSWORD_HASH: ${DISTRIBUTOR_ADMIN_PASSWORD_HASH:-}   # empty = admin API disabled
+    volumes:
+      - hawk_distributor_uploads:/data/uploads
+    ports:
+      - "127.0.0.1:${DISTRIBUTOR_HOST_PORT:-8083}:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 60s
+
+  frontend:
+    build: ./frontend
+    restart: unless-stopped
+    depends_on:
+      contact-api:     { condition: service_healthy }
+      career-api:      { condition: service_healthy }
+      distributor-api: { condition: service_healthy }
+    environment:
+      # Server-side only (never sent to the browser). Service names resolve on the compose network.
+      CONTACT_API_URL: http://contact-api:8080
+      CAREER_API_URL: http://career-api:8080
+      DISTRIBUTOR_API_URL: http://distributor-api:8080
+      TWILIO_ACCOUNT_SID: ${TWILIO_ACCOUNT_SID:-}
+      TWILIO_AUTH_TOKEN: ${TWILIO_AUTH_TOKEN:-}
+      TWILIO_VERIFY_SERVICE_SID: ${TWILIO_VERIFY_SERVICE_SID:-}
+      AGRISURE_URL: ${AGRISURE_URL:-}
+    ports:
+      - "${FRONTEND_HOST_PORT:-3000}:3000"
+
+volumes:
+  hawk_mysql_data:
+  hawk_career_uploads:
+  hawk_distributor_uploads:
