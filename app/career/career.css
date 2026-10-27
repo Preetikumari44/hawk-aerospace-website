@@ -1,0 +1,54 @@
+/* Career page styles ported from the standalone career app's globals.css.
+   Everything is scoped to .career-scope so no other page is affected. */
+@layer base {
+  .career-scope { font-size: 1.0625rem; line-height: 1.65; overflow-x: clip; }
+  @media (max-width: 639px) { .career-scope { font-size: 1rem; } }
+  .career-scope :focus-visible { outline: 3px solid #7fa7c6; outline-offset: 3px; border-radius: 6px; }
+}
+.career-scope { scroll-behavior: smooth; }
+
+/* Hero flight route: Work • Fly • Earn • Settle in Europe */
+.career-scope .career-route { list-style: none; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 0; }
+.career-scope .career-route li { display: flex; align-items: center; font-size: clamp(1.05rem, 2.4vw, 1.45rem); font-weight: 600; color: #fff; }
+.career-scope .career-route li::before { content: ""; width: 11px; height: 11px; margin-right: 12px; flex: none; border-radius: 50%; background: #a9cde9; box-shadow: 0 0 0 4px rgba(166, 215, 180, .22); }
+.career-scope .career-route li:last-child::before { background: #fff; box-shadow: 0 0 0 4px rgba(255, 255, 255, .28), 0 0 0 9px rgba(166, 215, 180, .18); }
+.career-scope .career-route li:not(:last-child)::after { content: ""; flex: none; width: clamp(20px, 5vw, 64px); height: 2px; margin: 0 14px; transform-origin: left; background: repeating-linear-gradient(90deg, #a9cde9 0 6px, transparent 6px 11px); }
+@media (max-width: 560px) {
+  .career-scope .career-route { flex-direction: column; align-items: flex-start; gap: 0; }
+  .career-scope .career-route li { position: relative; padding: 7px 0; }
+  .career-scope .career-route li:not(:last-child)::after { position: absolute; left: 4.5px; top: calc(50% + 10px); width: 2px; height: calc(100% - 4px); margin: 0; transform-origin: top; background: repeating-linear-gradient(180deg, #a9cde9 0 5px, transparent 5px 9px); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .career-scope .career-route li { opacity: 0; animation: career-route-in .6s cubic-bezier(.22,.7,.2,1) forwards; }
+  .career-scope .career-route li:nth-child(1) { animation-delay: .25s; } .career-scope .career-route li:nth-child(2) { animation-delay: .75s; }
+  .career-scope .career-route li:nth-child(3) { animation-delay: 1.25s; } .career-scope .career-route li:nth-child(4) { animation-delay: 1.75s; }
+  .career-scope .career-route li:not(:last-child)::after { transform: scaleX(0); animation: career-route-line .5s cubic-bezier(.22,.7,.2,1) forwards; }
+  .career-scope .career-route li:nth-child(1)::after { animation-delay: .5s; } .career-scope .career-route li:nth-child(2)::after { animation-delay: 1s; } .career-scope .career-route li:nth-child(3)::after { animation-delay: 1.5s; }
+  @media (max-width: 560px) { .career-scope .career-route li:not(:last-child)::after { transform: scaleY(0); animation-name: career-route-line-y; } }
+}
+
+/* Hero route, centred hero variant: the row centres on wide screens; on narrow screens the vertical
+   route keeps its dots in one column and the whole block is centred. */
+.career-scope .career-route-center { justify-content: center; }
+@media (max-width: 560px) { .career-scope .career-route-center { width: fit-content; margin-inline: auto; } }
+
+/* Section reveal: the hidden state only applies once CareerShell has flagged itself with .career-js */
+@media (prefers-reduced-motion: no-preference) {
+  .career-scope.career-js [data-reveal] { opacity: 0; transform: translateY(14px); transition: opacity .7s cubic-bezier(.22,.7,.2,1), transform .7s cubic-bezier(.22,.7,.2,1); }
+  .career-scope.career-js [data-reveal][data-in="true"] { opacity: 1; transform: none; }
+}
+
+/* FAQ answer typography */
+.career-scope .career-faq-answer > * + * { margin-top: .75rem; }
+.career-scope .career-faq-answer ul { margin-left: 1.2rem; list-style: disc; display: grid; gap: .4rem; }
+.career-scope .career-faq-answer strong { color: #263442; }
+
+@media (prefers-reduced-motion: reduce) {
+  .career-scope { scroll-behavior: auto; }
+  .career-scope *, .career-scope *::before, .career-scope *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+
+@keyframes career-route-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes career-route-line { to { transform: scaleX(1); } }
+@keyframes career-route-line-y { to { transform: scaleY(1); } }
+@keyframes career-field-in { to { opacity: 1; transform: none; } }
